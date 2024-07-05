@@ -1,111 +1,45 @@
-import Game from "../Models/game.model.js";
-import User from "../Models/auth.model.js";
+import Game from '../models/Game';
+import User from '../models/User';
 
-// Add a new Game
-export const addTodo = async (req, res) => {
+// Controller function to display highscore to the user
+const displayHighscore = async (req, res) => {
     try {
-        const { title } = req.body;
-        const userId = req.user._id;
+        const userId = req.user._id; // Assuming user ID is stored in req.user
 
-        if (!title || !description) {
-            return res.status(400).json({ message: "All fields are required" });
+        // Verify if the user exists
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
         }
 
-        const newTodo = await Todo.create({
-            user: userId,
-            title,
-            description,
-        });
+        const gameTitle = req.params.title; // Assuming game title is passed as a parameter
 
-        res.status(201).json({
-            success: true,
-            message: "Todo added successfully",
-            todo: newTodo,
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
-    }
-};
-
-// Get all todos for a user
-export const getTodos = async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const todos = await Todo.find({ user: userId });
-
-        res.status(200).json({
-            success: true,
-            todos,
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
-    }
-};
-
-// Update a todo
-export const updateTodo = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, description, completed } = req.body;
-        const userId = req.user._id;
-
-        const todo = await Todo.findOne({ _id: id, user: userId });
-
-        if (!todo) {
-            return res.status(404).json({
-                success: false,
-                message: "Todo not found",
-            });
+        // Check if the user has played the game at least once
+        const game = await Game.findOne({ user: userId, title: gameTitle });
+        if (!game) {
+            return res.status(404).json({ message: "User has not played this game yet" });
         }
 
-        todo.title = title || todo.title;
-        todo.description = description || todo.description;
-        todo.completed = completed !== undefined ? completed : todo.completed;
+        // Fetch the highest score for the specified game title
+        const highestScore = await Game.findOne({ title: gameTitle })
+                                      .sort({ highscore: -1 })
+                                      .select('highscore createdAt')
+                                      .populate('user', 'username'); // Populate user details (username)
 
-        await todo.save();
-
-        res.status(200).json({
-            success: true,
-            message: "Todo updated successfully",
-            todo,
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
-    }
-};
-
-// Delete a todo
-export const deleteTodo = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const userId = req.user._id;
-
-        const todo = await Todo.findOneAndDelete({ _id: id, user: userId });
-
-        if (!todo) {
-            return res.status(404).json({
-                success: false,
-                message: "Todo not found",
-            });
+        if (!highestScore) {
+            return res.status(404).json({ message: "Highscore not found for this game" });
         }
 
-        res.status(200).json({
-            success: true,
-            message: "Todo deleted successfully",
+        res.json({
+            username: highestScore.user.username,
+            title: highestScore.title,
+            highscore: highestScore.highscore,
+            createdAt: highestScore.createdAt,
         });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
+    } catch (error) {
+        console.error("Error fetching highscore:", error);
+        res.status(500).json({ message: "Server error" });
     }
 };
+
+export {displayHighscore };

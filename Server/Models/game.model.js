@@ -1,16 +1,21 @@
 import mongoose from "mongoose";
 
-const gameSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+
+const gameSchema = new Schema({
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
     title: {
         type: String,
+        required: true,
     },
     highscore: {
-        type: Int16Array,
+        type: Number,
+        required: true,
+        default: 0,  // Default highscore to 0
     },
     completed: {
         type: Boolean,
@@ -23,4 +28,5 @@ const gameSchema = new mongoose.Schema({
 });
 
 const Game = mongoose.model("Game", gameSchema);
+
 export default Game;
