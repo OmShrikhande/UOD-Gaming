@@ -1,0 +1,112 @@
+/* Reset default margin and padding for all elements */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure .home-container takes full viewport height */
+.home-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ensure video background covers entire .home-container */
+.video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Overlay for the video background */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Adjust transparency as needed */
+  z-index: -1;
+}
+
+/* Styling for the header */
+.header h1 {
+  font-size: 3.5rem;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Styling for the content section */
+.content {
+  text-align: center;
+  z-index: 1; /* Ensure content is above the video */
+}
+
+.content h2 {
+  font-size: 2.5rem;
+  color: #fff;
+}
+
+.content p {
+  font-size: 1.4rem;
+  color: #fff;
+  margin-bottom: 30px;
+}
+
+/* Styling for the buttons section */
+.buttons {
+  margin-top: 20px;
+}
+
+.button {
+  display: inline-block;
+  padding: 12px 24px;
+  margin: 10px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 1.4rem;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+/* Styling for the footer */
+.footer {
+  position: absolute;
+  bottom: 20px;
+  font-size: 1rem;
+  color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .content h2 {
+    font-size: 2rem;
+  }
+  
+  .content p {
+    font-size: 1.2rem;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+  }
+}
