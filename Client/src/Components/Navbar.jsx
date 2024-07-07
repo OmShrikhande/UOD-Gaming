@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../Css/Navbar.css';
 
 const Navbar = () => {
@@ -10,10 +11,10 @@ const Navbar = () => {
 
   return (
     <div className={`topnav ${isMenuOpen ? 'responsive' : ''}`} id="myTopnav">
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#news">News</a>
-      <a href="#home" className="active">Home</a>
+      <Link to="/Login" className="active">Login</Link>
+      <Link to="/Foote">Contact</Link>
+      <Link to="/Sign">Sign-up</Link>
+      <Link to="/Home" >Home</Link>
       <a href="#" className="icon" onClick={toggleMenu}>
         {isMenuOpen ? <>&#10005;</> : <>&#9776;</>}
       </a>

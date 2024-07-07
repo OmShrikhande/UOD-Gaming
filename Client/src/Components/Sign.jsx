@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import "../Css/Sign.css"; 
+import Foote from './Foote';
 
 const Sign = ({ onSign }) => {
   const [username, setUsername] = useState('');
@@ -22,6 +23,7 @@ const Sign = ({ onSign }) => {
   };
 
   return (
+    <div>
     <div className="signup-container">
       <form className="signup-form" onSubmit={handleSign}>
         <h2>Sign </h2>
@@ -48,6 +50,8 @@ const Sign = ({ onSign }) => {
         />
         <button type="submit">Sign </button>
       </form>
+    </div>
+    <Foote/>
     </div>
   );
 };

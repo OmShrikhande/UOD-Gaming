@@ -1,0 +1,33 @@
+/* CSS styles for the game */
+
+#gameCanvas {
+    width: 400px;
+    height: 400px;
+    border: 1px solid black;
+    margin: 20px auto;
+    background-image: url("../../media/ex.jpg");
+}
+body{
+    background-image: url("../../media/ex.jpg");
+}
+
+button {
+    display: block;
+    margin: 10px auto;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:active {
+    background-color: #3e8e41;
+    transform: translateY(1px);
+}

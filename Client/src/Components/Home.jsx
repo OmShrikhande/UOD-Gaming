@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import "../Css/Home.css";
+import Foote from '../Components/Foote'
 import videoBackground from '../assets/videoplayback.mp4'; // Replace with your video file path
 
 const Home = () => {
   return (
+    <div>
     <div className="home-container">
       <video autoPlay loop muted className="video-bg">
         <source src={videoBackground} type="video/mp4" />
@@ -22,9 +24,10 @@ const Home = () => {
           <Link to="/sign" className="button">Sign Up</Link>
         </div>
       </div>
-      <footer className="footer">
-        <p>&copy; 2024 Game Playlist App. All rights reserved.</p>
-      </footer>
+     
+    </div>
+    
+  <Foote/>
     </div>
   );
 };

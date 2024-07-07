@@ -1,0 +1,199 @@
+
+.explainom{
+    width: 80%;
+    height: 350px;
+   border-style: solid;
+   border-color: #000;
+    border-radius: 10px;
+    padding: 1%;
+    margin-left: 10%;
+    color: #000;
+    font-family: Times New Roman;
+    display: flex;
+    list-style-type: circle;  
+   
+  }
+  .exp{
+    
+    flex: none;
+    width: 600px;
+    height: 400px;
+    font-size: 17px;
+    font-weight: bold;
+  }
+  
+  .exp2{
+    
+    flex: none;
+    width: 600px;
+    height: 400px;
+    font-size: 19px;
+    font-weight: bold;
+    text-align: justify;
+  }
+  
+  .exp3{
+    
+    flex: none;
+    width: 600px;
+    height: 400px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: justify;
+  }
+  .explainom > img{
+    flex: none;
+    padding: 2%;
+    width:250px;
+    height: 250px;
+    float:right;
+    margin-left: 10%;
+    margin-top: 5%;
+  }
+  
+  .explain{
+    margin-bottom: 5%;
+    display: flex;
+  }
+    /* respnsive ness */
+  
+  
+  
+  
+  @media screen and (min-width: 960px) {
+  
+      main {
+  
+      display: flex;
+  
+      padding-inline: 0;
+  
+      }
+  
+  }
+  
+  /* sec */
+  main .content {
+  
+      width: 100%;
+      
+      color: #fff;
+      
+      position: relative;
+      
+      z-index: 2;
+      
+      margin-bottom: 3en;
+  }
+      @media screen and (min-width: 960px) {
+      
+      main .content {
+      
+      width: 40%;
+      
+      padding-left: 5em;
+      
+      margin-bottom: 0;
+      }
+      
+      main h2 {
+      
+      letter-spacing: 0.8px;
+      
+      font-weight: 700;
+      
+      font-size: 2.8rem;
+       line-height: 1.2;
+      }
+      main p{
+      
+      font-size: 1rem;
+      
+      Line-height: 1.8;
+      
+      margin-inLine: auto;
+      
+      margin-top: 10px;
+      
+      } 
+      main .counter {
+      
+      font-weight: 400;
+      
+      display: flex; align-items: center;
+      
+      margin: 2.5em 0 2em 0;
+      
+      gap: 2em;
+      }
+      
+      /* 3rs */
+      main .btn i {
+  
+          margin-left: 15px;
+          
+          }
+          
+          main .btn:hover {
+          
+          background-color: #ae0a53;
+          
+          }
+          
+          .swiper-container {
+          
+          position: relative;
+           overflow: hidden;
+          
+          width: 100%;
+          
+          right: 0px;
+          
+          margin: 0 auto;
+          }
+          @media screen and (min-width: 960px) {
+          
+          .swiper-container{
+          
+          width: 60%;
+          
+          right: -60px;
+          
+          }
+          
+          }
+          
+          .swiper {
+          
+          position: relative;
+          
+          width: 100%;
+          
+          z-index: 2;
+          
+          }
+          
+          swiper-slide {
+          width: 10rem;
+          
+          height: 24rem;
+          
+          display: flex;
+          
+          flex-direction: column;
+          
+          align-items: self-start; position: relative;
+          
+          border-radius: 12px;
+          
+          box-shadow: 1px 5px 15px #0800081f;
+          
+          text-align: center;
+          
+          opacity: 0.4;
+          
+          transition: opacity 8.4s ease-in;
+          
+          }
+      }
+  

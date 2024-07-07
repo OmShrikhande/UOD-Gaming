@@ -22,7 +22,7 @@ const Login = ({ onLogin }) => {
   {
     if (username === 'user' && password === 'password') {
       alert('Login successful!'); 
-      window.location.href="../UODGaming.jsx";
+      window.location.href="../Pages/UODGaming.html";
     } else {
       setError('Invalid username or password');
     }
@@ -48,7 +48,7 @@ const Login = ({ onLogin }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" onSubmit={go()}>Login</button>
+        <button type="submit" onClick={onLogin}>Login</button>
       </form>
       <br />
       <div className="signup-link">
