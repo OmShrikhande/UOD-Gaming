@@ -35,7 +35,7 @@ const Card = () => {
 
   <div class="nft">
     <div class='main'>
-      <img class='tokenImage' src="https://files.utilitylog.com/img/Snake-game-on-Google.png" alt="NFT" />
+      <img class='tokenImage' src="https://play-lh.googleusercontent.com/S9ZmNx5LYCj7h2IJZb0QqkXAGki6JRdata:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20600%20600'%3E%3C/svg%3EaMQ25ycKfrngDkNBA6jk7rM87YcAH1prV_OAhttps://files.utilitylog.com/img/Snake-game-on-Google.png" alt="NFT" />
       <h2>Snake Game</h2>
       <p class='description'>This is to give you your old memories .</p>
       <div class='tokenInfo'>
