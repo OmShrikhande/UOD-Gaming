@@ -1,15 +1,13 @@
 /* CSS styles for the game */
 
 #gameCanvas {
-    width: 400px;
-    height: 400px;
+    max-width: 800px;
+    height: 600px;
     border: 1px solid black;
     margin: 20px auto;
     background-image: url("../../media/ex.jpg");
 }
-body{
-    background-image: url("../../media/ex.jpg");
-}
+
 
 button {
     display: block;

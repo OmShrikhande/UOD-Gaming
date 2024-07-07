@@ -13,8 +13,8 @@ const Navbar = () => {
     <div className={`topnav ${isMenuOpen ? 'responsive' : ''}`} id="myTopnav">
       <Link to="/Login" className="active">Login</Link>
       <Link to="/Foote">Contact</Link>
-      <Link to="/Sign">Sign-up</Link>
-      <Link to="/Home" >Home</Link>
+      <Link to="/Download">Games</Link>
+      <Link to="/" >Home</Link>
       <a href="#" className="icon" onClick={toggleMenu}>
         {isMenuOpen ? <>&#10005;</> : <>&#9776;</>}
       </a>

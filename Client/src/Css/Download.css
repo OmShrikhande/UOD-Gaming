@@ -1,0 +1,42 @@
+/* ImageDownloader.css */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 40px;
+    max-width: 80%;
+    margin: 40px auto;
+  }
+  
+  .image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+   .image-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 480px) {
+   .image-grid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+   .image {
+      height: 150px;
+    }
+  }
+
+  h1{
+    text-align: center;
+    margin-top: 10%;
+  }

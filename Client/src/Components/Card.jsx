@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../Css/Card.css';
+import { Link } from 'react-router-dom'
 import play from '../assets/play.png'
 
 const Card = () => {
@@ -26,8 +27,8 @@ const Card = () => {
       <hr />
       <div className='creator'>
         <div className='wrapper'>
-          <a href="../Pages/tictacktoe.html">
-          <img src={play}alt="start" /></a>
+        <Link to="/TTT">
+          <img src={play}alt="start" /></Link>
         </div>
         <p>Let's get into Battle!</p>
       </div>
@@ -54,9 +55,8 @@ const Card = () => {
       <hr />
       <div className='creator'>
         <div className='wrapper'>
-          
-          <a href="../Pages/snake.html">
-          <img src={play} alt="start" /></a>
+        <Link to="/Snake">
+          <img src={play} alt="start" /></Link>
 
         </div>
         <p>Go Break the highscore !!</p>
@@ -83,8 +83,8 @@ const Card = () => {
       <hr />
       <div className='creator'>
         <div className='wrapper'>
-          <a href="../Pages/color.html">
-          <img src={play} alt="start" /></a>
+        <Link to="/ColorG">
+          <img src={play} alt="start" /></Link>
         </div>
         <p>Lets Test Luck Today!</p>
       </div>

@@ -1,63 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game | Gamedivers</title>
-    <link href="../media/weblogo.png" rel="icon" type="image/png" />
-    <link href="./snake.css" rel="stylesheet" type="text/css" />
+import React from 'react';
 
+import '../Css/Snake.css';
 
-    <style>
-        /* CSS styles for the game */
-
-#gameCanvas {
-    width: 1200px;
-    height: 800px;
-    border: 1px solid black;
-    margin: 20px auto;
-    background-color: black;
-   
-}
-body{
-   background-image: url("https://wallpapers.com/images/high/green-snake-game-character-bqvxt2p5oibadgqn.webp");
-   background-repeat: no-repeat;
-   background-size: cover;
-}
-
-button {
-    display: block;
-    margin: 10px auto;
-    padding: 5px 10px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 50px;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-button:active {
-    background-color: #3e8e41;
-    transform: translateY(1px);
-}
-
-    </style>
-</head>
-<body>
-    <canvas id="gameCanvas">
-        <!-- Game canvas will be drawn here -->
-</canvas>
-    <button id="startButton">Start</button>
-    <button id="pauseButton">Pause</button>
-    <button id="restartButton">Restart</button>
-
-    <script>
-   // Constants
+const Navbar = () => {
+     // Constants
 const CANVAS_SIZE = 1200;
 const CELL_SIZE = 30;
 const INITIAL_SPEED = 150; // in milliseconds
@@ -219,6 +165,19 @@ function gameOver() {
     // Send data to the server using AJAX
   
 }
-</script>
+
+  return (
+    
+<body>
+    <canvas id="gameCanvas">
+      
+</canvas>
+    <button id="startButton">Start</button>
+    <button id="pauseButton">Pause</button>
+    <button id="restartButton">Restart</button>
+
 </body>
-</html>
+  );
+};
+
+export default Navbar;
