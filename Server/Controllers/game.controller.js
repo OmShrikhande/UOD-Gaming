@@ -1,5 +1,5 @@
-import Game from '../models/Game';
-import User from '../models/User';
+import Game from '../Models/game.model.js';
+import User from '../Models/auth.model.js';
 
 // Controller function to display highscore to the user
 const displayHighscore = async (req, res) => {
