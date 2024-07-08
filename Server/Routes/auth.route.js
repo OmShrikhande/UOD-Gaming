@@ -9,7 +9,7 @@ import { isAuthenticated } from "../Middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/register").post(registerUser);
+router.route("/signup").post(registerUser);
 router.route("/login").post(loginUser);
 router.route("/isLogin").get(isAuthenticated, isLogin);
 router.route("/getAllUsers").get(getAllUsers);
