@@ -11,9 +11,9 @@ const Login = ({ onLogin }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/v1/user/login', { email, password });
-      onLogin(response.data.user);
-      alert('Login successful!');
+      // const response = await axios.post('http://localhost:5000/api/v1/user/login', { email, password });
+      // onLogin(response.data.user);
+      // alert('Login successful!');
       window.location.href = "/UODGaming"; // Adjust the path as needed
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
