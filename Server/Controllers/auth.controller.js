@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import User from "../Models/auth.model.js";
-import { createToken } from "../middlewares/auth.middleware.js";
+import { createToken } from "../Middlewares/auth.middleware.js";
 
 export const registerUser = async (req, res) => {
     try {
