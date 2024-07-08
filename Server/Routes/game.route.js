@@ -1,6 +1,6 @@
 import express from 'express';
-import { displayHighscore } from '../Controllers/game.controller';
-import { isAuthenticated } from '../middlewares/auth.middleware';
+import { displayHighscore } from '../Controllers/game.controller.js';
+import { isAuthenticated } from '../Middlewares/auth.middleware.js';
 
 const router = express.Router();
 
