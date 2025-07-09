@@ -1,33 +1,24 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 import '../Css/Login.css';
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (username === 'user' && password === 'password') {
-      onLogin(username);
-      go();
-    } else {
-      setError('Invalid username or password');
+    try {
+      // const response = await axios.post('http://localhost:5000/api/v1/user/login', { email, password });
+      // onLogin(response.data.user);
+      // alert('Login successful!');
+      window.location.href = "/UODGaming"; // Adjust the path as needed
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred');
     }
   };
-
-  const go=()=>
-  {
-    if (username === 'user' && password === 'password') {
-      alert('Login successful!'); 
-      window.location.href="../Pages/UODGaming.html";
-    } else {
-      setError('Invalid username or password');
-    }
-   
-  }
 
   return (
     <div className="login-container">
@@ -36,9 +27,9 @@ const Login = ({ onLogin }) => {
         {error && <div className="error">{error}</div>}
         <input
           type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
@@ -48,7 +39,7 @@ const Login = ({ onLogin }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" onClick={onLogin}>Login</button>
+        <button type="submit">Login</button>
       </form>
       <br />
       <div className="signup-link">

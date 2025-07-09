@@ -5,17 +5,17 @@ import Foote from './Foote';
 
 const Downloader = () => {
   const images = [
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 1' },
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 2' },
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 3' },
+    { src: 'https://qph.cf2.quoracdn.net/main-qimg-e26d8b7c07bda45bc6c3ebb4ae522946.webp', alt: 'Image 1' },
+    { src: 'https://store-images.s-microsoft.com/image/apps.23625.13806078025361171.9723cf5e-1e29-4d9d-ad0a-cc37a95bb75d.e02f4ead-d89b-45cd-8eb5-5dcbf44ae91f?q=90&w=256&h=384&mode=crop&format=jpg&background=%23FFFFFF', alt: 'Image 2' },
+    { src: 'https://static.javatpoint.com/top10-technologies/images/top-10-car-racing-games-for-pc-free-download1.jpg', alt: 'Image 3' },
 
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 1' },
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 2' },
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 3' },
+    { src: 'https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1686588690-71tSb7u1q9L.jpg?crop=1.00xw:0.710xh;0,0.114xh&resize=980:*', alt: 'Image 1' },
+    { src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7_5HL-0WePb6JhTa8fd168e1gcK_xnQpD_g&s', alt: 'Image 2' },
+    { src: 'https://i.ytimg.com/vi/3zwBKlwgpk4/maxresdefault.jpg', alt: 'Image 3' },
 
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 1' },
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 2' },
-    { src: 'https://play-lh.googleusercontent.com/zPxLgj5nvl20ahJV7aFC6S5mD8kii5CEEDj25j1P9CYAfXL9sdDuO-8eES0r4DhJHrU', alt: 'Image 3' },
+    { src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiAj6EuyWmiefK4ewl14s0VMFeJ7B-GZJjlbM9F4pOiTrnvptWwkoro_IOPuB-TnPzMUM&usqp=CAU', alt: 'Image 1' },
+    { src: 'https://www.fullgamepc.com/wp-content/uploads/2020/01/Ready-or-Not-game-download-348x139.jpg', alt: 'Image 2' },
+    { src: 'https://products.eneba.games/resized-products/q8shkfzxblrn22o9dvra_350x200_3x-0.jpg', alt: 'Image 3' },
     // Add more images to the array as needed
   ];
   const handleImageClick = (imageSrc) => {
