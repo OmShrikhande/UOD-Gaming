@@ -1,0 +1,25 @@
+name: Daily Commit
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Runs every day at 03:00 UTC
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "MrDevashish-777"
+          git config --global user.email "devashishpillay777@example.com"
+
+      - name: Make a tiny change
+        run: |
+          echo "Last commit: $(date)" > last_commit.txt
+          git add last_commit.txt
+          git commit -m "🤖 Daily streak commit: $(date '+%Y-%m-%d')" || echo "No changes to commit"
+          git push
