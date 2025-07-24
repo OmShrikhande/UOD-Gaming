@@ -1,0 +1,2 @@
+# This file ensures the uploads directory is tracked by Git
+# The directory is needed for file uploads but the contents should not be tracked

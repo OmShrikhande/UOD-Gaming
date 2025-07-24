@@ -1,0 +1,229 @@
+# 🎮 UOD Gaming - Secure Repository Configuration
+# ===============================================
+
+# 🔒 SENSITIVE FILES - NEVER COMMIT THESE!
+# Environment variables containing secrets
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+.env.*
+!.env.example
+
+# 🛡️ SECURITY & AUTHENTICATION
+# API keys and secrets
+*.key
+*.pem
+*.p12
+*.pfx
+config/secrets.json
+config/keys.json
+auth-config.json
+
+# JWT secret files
+jwt-secret.txt
+secrets/
+
+# Database credentials
+database-config.json
+db-credentials.json
+
+# 💳 PAYMENT & FINANCIAL DATA
+# Payment gateway configurations
+payment-keys.json
+upi-credentials.json
+razorpay-config.json
+paypal-config.json
+
+# 📧 EMAIL CREDENTIALS
+# Email service configurations
+email-config.json
+smtp-credentials.json
+mailer-secrets.json
+
+# 📱 MOBILE & API CONFIGURATIONS
+# Firebase config
+firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# AWS credentials
+.aws/
+aws-config.json
+
+# 📦 DEPENDENCIES & BUILD FILES
+# Node.js
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.npm
+.yarn-integrity
+
+# Package lock files (uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+
+# 🏗️ BUILD & DISTRIBUTION
+# Build outputs
+**/dist/
+**/build/
+**/out/
+**/.next/
+**/.nuxt/
+**/.vuepress/dist/
+
+# Static file builds
+**/public/build/
+**/assets/build/
+
+# 📝 LOGS & TEMPORARY FILES
+# Log files
+*.log
+logs/
+*.log.*
+loglevel.json
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage and testing
+coverage/
+.coverage
+.nyc_output
+.jest/
+test-results/
+junit.xml
+
+# 🛠️ DEVELOPMENT TOOLS
+# IDE and editor files
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# 📂 UPLOADS & USER CONTENT
+# File uploads (be careful with this)
+**/uploads/
+!**/uploads/.gitkeep
+**/temp/
+**/tmp/
+
+# User generated content
+**/user-uploads/
+**/profile-pictures/
+**/game-screenshots/
+**/payment-proofs/
+
+# 💾 DATABASE FILES
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Database dumps
+*.sql
+*.dump
+database-backup/
+
+# 🎯 PLATFORM SPECIFIC
+# Windows
+*.exe
+*.msi
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# 📱 MOBILE DEVELOPMENT
+# React Native
+.expo/
+.expo-shared/
+
+# 🔧 CACHE & TEMPORARY
+# Cache directories
+.cache/
+.parcel-cache/
+.next/cache/
+.nuxt/
+.vuepress/.cache/
+
+# Temporary folders
+tmp/
+temp/
+
+# 🎮 GAME SPECIFIC FILES
+# Game files that shouldn't be tracked
+**/game-builds/
+**/game-exports/
+**/large-assets/
+*.unity3d
+*.unitypackage
+
+# Development game data
+game-data-dev.json
+test-scores.json
+dev-leaderboard.json
+
+# 🚀 DEPLOYMENT
+# Deployment configurations
+docker-compose.override.yml
+docker-compose.prod.yml
+.dockerignore
+
+# Serverless
+.serverless/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# 📊 ANALYTICS & MONITORING
+# Analytics configurations
+analytics-config.json
+google-analytics.json
+mixpanel-config.json
+
+# ⚡ PERFORMANCE
+# Bundle analyzer
+bundle-report.html
+.bundle-analyzer/
+
+# 🎪 MISCELLANEOUS
+# Backup files
+*.bak
+*.backup
+*.old
+
+# OS generated files
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# 🔍 LOCAL DEVELOPMENT
+# Local development overrides
+local-config.json
+dev-settings.json
+*.local.js
+*.local.json
+
+# Testing files
+*.test.local.*
+test-data/
