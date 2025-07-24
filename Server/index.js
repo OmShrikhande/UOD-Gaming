@@ -27,16 +27,48 @@ const server = createServer(app);
 // Socket.IO setup for real-time chat
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:3000",
-        methods: ["GET", "POST"]
+        origin: [
+            process.env.FRONTEND_URL || "http://localhost:5173",
+            "http://localhost:3000", // React default
+            "http://localhost:5173", // Vite default
+            "http://127.0.0.1:5173", // Alternative localhost
+            "http://127.0.0.1:3000"  // Alternative localhost
+        ],
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
 // Configure CORS
-app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true
-}));
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // List of allowed origins
+        const allowedOrigins = [
+            process.env.FRONTEND_URL || "http://localhost:5173",
+            "http://localhost:3000", // React default
+            "http://localhost:5173", // Vite default
+            "http://127.0.0.1:5173", // Alternative localhost
+            "http://127.0.0.1:3000"  // Alternative localhost
+        ];
+        
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else if (process.env.NODE_ENV === 'development') {
+            // Allow all origins in development
+            callback(null, true);
+        } else {
+            callback(new Error('🚫 Not allowed by CORS policy'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
 
 // Body parsing middleware
 app.use(express.json({ limit: '50mb' }));
