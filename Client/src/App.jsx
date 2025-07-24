@@ -12,6 +12,9 @@ import Snake from './Components/Snake'
 import ColorG from './Components/ColorG'
 import TTT from './Components/TTT'
 
+// Import global styles
+import './styles/globals.css';
+
 
 const App = () => {
   return (

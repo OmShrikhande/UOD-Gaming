@@ -4,22 +4,53 @@ import { createToken } from "../Middlewares/auth.middleware.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    console.log('Received signup request:', req.body);
+    const { name, username, email, password } = req.body;
+    const userName = name || username;
 
-    if (![name, email, password].every(Boolean)) {
-      return res.status(400).json({ message: "All Fields are required" });
+    if (!userName || !email || !password) {
+      console.log('Missing fields:', { userName, email, password: password ? 'provided' : 'missing' });
+      return res.status(400).json({ 
+        success: false,
+        message: "All Fields are required",
+        missingFields: {
+          username: !userName,
+          email: !email,
+          password: !password
+        }
+      });
     }
 
-    const existingUser = await User.findOne({ $or: [{ email }, { name }] });
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Please provide a valid email address" 
+      });
+    }
+
+    // Password length validation
+    if (password.length < 6) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Password must be at least 6 characters long" 
+      });
+    }
+
+    const existingUser = await User.findOne({ $or: [{ email }, { name: userName }] });
 
     if (existingUser) {
-      return res.status(400).json({ message: "User is already Exist" });
+      return res.status(400).json({ 
+        success: false,
+        message: "User already exists with this email or username" 
+      });
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,
+      name: userName,
       email,
       password: hashPassword,
     });
@@ -33,10 +64,10 @@ export const registerUser = async (req, res) => {
       token,
     });
   } catch (err) {
-    console.error(err);
+    console.error('Registration error:', err);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error: " + err.message,
     });
   }
 };

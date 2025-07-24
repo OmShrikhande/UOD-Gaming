@@ -1,0 +1,403 @@
+/* ========================================
+   MODERN GAMING SIGN UP STYLES
+   ======================================== */
+
+.sign-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding-top: 80px;
+}
+
+.sign-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 212, 255, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 25%,
+    rgba(255, 0, 110, 0.1) 50%,
+    rgba(0, 255, 136, 0.1) 75%,
+    rgba(255, 255, 0, 0.1) 100%
+  );
+}
+
+.bg-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--primary-neon);
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+.sign-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+.sign-card {
+  width: 100%;
+  max-width: 480px;
+  padding: var(--space-3xl);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.sign-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: conic-gradient(
+    var(--primary-neon),
+    var(--secondary-neon),
+    var(--accent-purple),
+    var(--primary-neon)
+  );
+  border-radius: inherit;
+  z-index: -1;
+  animation: rotate-border 3s linear infinite;
+  opacity: 0.3;
+}
+
+.sign-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-card);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Header */
+.sign-header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.sign-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-round);
+  margin-bottom: var(--space-lg);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.sign-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+  text-transform: uppercase;
+  background: var(--gradient-gaming);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sign-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+/* Form */
+.sign-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: var(--space-md);
+  color: var(--text-muted);
+  z-index: 2;
+  transition: color var(--transition-normal);
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-md) var(--space-md) var(--space-md) 3rem;
+  background: var(--surface-1);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-neon);
+  box-shadow: var(--shadow-glow-primary);
+  background: var(--surface-2);
+}
+
+.input:focus + .input-icon,
+.input.valid + .input-icon {
+  color: var(--primary-neon);
+}
+
+.input.valid {
+  border-color: var(--accent-green);
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.input.invalid {
+  border-color: var(--secondary-neon);
+  background: rgba(255, 0, 110, 0.05);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.validation-icon {
+  position: absolute;
+  right: 3rem;
+  z-index: 2;
+}
+
+.valid-icon {
+  color: var(--accent-green);
+}
+
+.invalid-icon {
+  color: var(--secondary-neon);
+}
+
+.password-toggle {
+  position: absolute;
+  right: var(--space-md);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  color: var(--primary-neon);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.validation-message {
+  color: var(--secondary-neon);
+  font-size: 0.9rem;
+  margin-top: var(--space-xs);
+  padding-left: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Messages */
+.error-message,
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  margin: var(--space-sm) 0;
+}
+
+.error-message {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid rgba(255, 0, 110, 0.3);
+  color: var(--secondary-neon);
+}
+
+.success-message {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: var(--accent-green);
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: var(--space-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.submit-btn:disabled:hover {
+  transform: none !important;
+  box-shadow: var(--shadow-button) !important;
+}
+
+.submit-btn.loading {
+  pointer-events: none;
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Footer */
+.sign-footer {
+  text-align: center;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sign-footer p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.sign-link {
+  color: var(--primary-neon);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+}
+
+.sign-link:hover {
+  color: var(--text-primary);
+  text-shadow: 0 0 10px var(--primary-neon);
+}
+
+/* Animations */
+@keyframes rotate-border {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sign-wrapper {
+    padding-top: 70px;
+  }
+
+  .sign-container {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .sign-card {
+    padding: var(--space-2xl);
+  }
+
+  .sign-title {
+    font-size: 1.8rem;
+  }
+
+  .sign-subtitle {
+    font-size: 1rem;
+  }
+
+  .input {
+    padding: var(--space-md) var(--space-md) var(--space-md) 2.8rem;
+  }
+
+  .validation-icon {
+    right: 2.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sign-wrapper {
+    padding-top: 60px;
+  }
+
+  .sign-container {
+    padding: var(--space-md) var(--space-sm);
+  }
+
+  .sign-card {
+    padding: var(--space-xl);
+  }
+
+  .sign-title {
+    font-size: 1.6rem;
+  }
+
+  .sign-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .sign-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* High Performance Mode */
+@media (prefers-reduced-motion: reduce) {
+  .sign-card::before,
+  .particle,
+  .loading-spinner {
+    animation: none;
+  }
+  
+  .input,
+  .password-toggle,
+  .sign-link,
+  .submit-btn {
+    transition: none;
+  }
+}

@@ -10,11 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "aos": "^2.3.4",
     "axion": "^0.1.0",
     "axios": "^1.7.2",
+    "framer-motion": "^12.23.7",
+    "lucide-react": "^0.525.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1"
+    "react-intersection-observer": "^9.16.0",
+    "react-router-dom": "^6.24.1",
+    "react-spring": "^10.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

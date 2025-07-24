@@ -21,6 +21,6 @@ app.use("/api/v2/game", gameRouter);
 const port = process.env.PORT;
 
 mongoose
-    .connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(process.env.MONGO_URL)
     .then(() => app.listen(port, () => console.log(`⚙️  Server is running and connected to db at port ${port} :)`)))
     .catch((err) => console.log(`${err} is error`));
