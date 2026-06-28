@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Pause } from 'lucide-react';
 import axios from 'axios';
 import '../Css/TTT.css';
 
@@ -108,6 +108,8 @@ const TTT = () => {
 
   // Menu items selection
   const [menuIndex, setMenuIndex] = useState(0);
+  const menuIndexRef = useRef(0);
+  useEffect(() => { menuIndexRef.current = menuIndex; }, [menuIndex]);
 
   // Grid Selection Cursor (for keyboard controls)
   const [gridCursor, setGridCursor] = useState(4); // default center cell index (0-8)
@@ -162,7 +164,7 @@ const TTT = () => {
 
   // Submit high score
   const submitTttResult = async (scoreToSubmit) => {
-    const token = localStorage.getItem('token');
+    const token = 'cookie-token';
     if (gameId && token) {
       setSubmitStatus('submitting');
       try {
@@ -362,18 +364,28 @@ const TTT = () => {
     if (curState === 'LOBBY') {
       if (code === 'ArrowUp' || code === 'KeyW') {
         playSound('click');
-        setMenuIndex(prev => (prev === 0 ? 2 : prev - 1));
+        setMenuIndex(prev => {
+          const next = prev === 0 ? 3 : prev - 1;
+          menuIndexRef.current = next;
+          return next;
+        });
       } else if (code === 'ArrowDown' || code === 'KeyS') {
         playSound('click');
-        setMenuIndex(prev => (prev === 2 ? 0 : prev + 1));
+        setMenuIndex(prev => {
+          const next = prev === 3 ? 0 : prev + 1;
+          menuIndexRef.current = next;
+          return next;
+        });
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click');
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           launchGameplay('cpu');
-        } else if (menuIndex === 1) {
+        } else if (menuIndexRef.current === 1) {
           launchGameplay('duo');
-        } else if (menuIndex === 2) {
+        } else if (menuIndexRef.current === 2) {
           setGameState('LEADERBOARD');
+        } else if (menuIndexRef.current === 3) {
+          window.location.href = '/UODGaming';
         }
       }
     } else if (curState === 'LEADERBOARD') {
@@ -385,19 +397,28 @@ const TTT = () => {
     } else if (curState === 'PAUSE') {
       if (code === 'ArrowUp' || code === 'KeyW') {
         playSound('click');
-        setMenuIndex(prev => (prev === 0 ? 2 : prev - 1));
+        setMenuIndex(prev => {
+          const next = prev === 0 ? 2 : prev - 1;
+          menuIndexRef.current = next;
+          return next;
+        });
       } else if (code === 'ArrowDown' || code === 'KeyS') {
         playSound('click');
-        setMenuIndex(prev => (prev === 2 ? 0 : prev + 1));
+        setMenuIndex(prev => {
+          const next = prev === 2 ? 0 : prev + 1;
+          menuIndexRef.current = next;
+          return next;
+        });
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click');
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           setGameState('GAMEPLAY');
-        } else if (menuIndex === 1) {
+        } else if (menuIndexRef.current === 1) {
           launchGameplay(gameModeRef.current);
-        } else if (menuIndex === 2) {
+        } else if (menuIndexRef.current === 2) {
           setGameState('LOBBY');
           setMenuIndex(0);
+          menuIndexRef.current = 0;
         }
       } else if (code === 'Escape') {
         playSound('click');
@@ -406,14 +427,19 @@ const TTT = () => {
     } else if (curState === 'GAMEOVER') {
       if (code === 'ArrowUp' || code === 'KeyW' || code === 'ArrowDown' || code === 'KeyS') {
         playSound('click');
-        setMenuIndex(prev => (prev === 0 ? 1 : 0));
+        setMenuIndex(prev => {
+          const next = prev === 0 ? 1 : 0;
+          menuIndexRef.current = next;
+          return next;
+        });
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click');
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           launchGameplay(gameModeRef.current);
         } else {
           setGameState('LOBBY');
           setMenuIndex(0);
+          menuIndexRef.current = 0;
         }
       }
     } else if (curState === 'GAMEPLAY') {
@@ -474,59 +500,8 @@ const TTT = () => {
     const clickX = (e.clientX - rect.left) * scaleX;
     const clickY = (e.clientY - rect.top) * scaleY;
 
-    const curState = gameState;
-    if (curState === 'LOBBY') {
-      // VS COMPUTER
-      if (clickX >= 150 && clickX <= 450 && clickY >= 280 && clickY <= 320) {
-        playSound('click');
-        launchGameplay('cpu');
-      }
-      // DUO COMBAT
-      else if (clickX >= 150 && clickX <= 450 && clickY >= 340 && clickY <= 380) {
-        playSound('click');
-        launchGameplay('duo');
-      }
-      // LEADERBOARD
-      else if (clickX >= 150 && clickX <= 450 && clickY >= 400 && clickY <= 440) {
-        playSound('click');
-        setGameState('LEADERBOARD');
-      }
-    } else if (curState === 'LEADERBOARD') {
-      if (clickX >= 180 && clickX <= 420 && clickY >= 490 && clickY <= 530) {
-        playSound('click');
-        setGameState('LOBBY');
-        setMenuIndex(2);
-      }
-    } else if (curState === 'PAUSE') {
-      // RESUME
-      if (clickX >= 200 && clickX <= 400 && clickY >= 240 && clickY <= 280) {
-        playSound('click');
-        setGameState('GAMEPLAY');
-      }
-      // RESTART
-      else if (clickX >= 200 && clickX <= 400 && clickY >= 300 && clickY <= 340) {
-        playSound('click');
-        launchGameplay(gameMode);
-      }
-      // EXIT
-      else if (clickX >= 200 && clickX <= 400 && clickY >= 360 && clickY <= 400) {
-        playSound('click');
-        setGameState('LOBBY');
-        setMenuIndex(0);
-      }
-    } else if (curState === 'GAMEOVER') {
-      // REMATCH
-      if (clickX >= 150 && clickX <= 450 && clickY >= 450 && clickY <= 490) {
-        playSound('click');
-        launchGameplay(gameMode);
-      }
-      // QUIT TO MENU
-      else if (clickX >= 150 && clickX <= 450 && clickY >= 505 && clickY <= 545) {
-        playSound('click');
-        setGameState('LOBBY');
-        setMenuIndex(0);
-      }
-    } else if (curState === 'GAMEPLAY') {
+    const curState = gameStateRef.current;
+    if (curState === 'GAMEPLAY') {
       // Check if clicked inside grid cell
       for (let i = 0; i < 9; i++) {
         const row = Math.floor(i / 3);
@@ -570,260 +545,9 @@ const TTT = () => {
       const curState = gameStateRef.current;
 
       // ----------------------------------------------------
-      // STATE: LOBBY
+      // STATE HANDLING
       // ----------------------------------------------------
-      if (curState === 'LOBBY') {
-        ctx.shadowColor = '#00d4ff';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#00d4ff';
-        ctx.font = 'bold 36px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('NEON DUO COMBAT', CANVAS_SIZE / 2, 130);
-
-        ctx.shadowColor = '#ff007f';
-        ctx.fillStyle = '#b4b4c8';
-        ctx.font = '14px "Exo 2", sans-serif';
-        ctx.fillText('CROSS-GRID TIC TAC TOE ARCADE', CANVAS_SIZE / 2, 170);
-
-        const menuItems = [
-          'VS COMPUTER',
-          'DUO COMBAT',
-          'SYSTEM RANKINGS'
-        ];
-
-        menuItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 300 + idx * 60;
-
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 180, y - 28, 360, 40);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 18px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '16px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#8888a0';
-        ctx.font = '12px "Exo 2", sans-serif';
-        ctx.fillText('USE ARROWS / WASD TO NAVIGATE • SPACEBAR TO SELECT', CANVAS_SIZE / 2, 550);
-      }
-
-      // ----------------------------------------------------
-      // STATE: LEADERBOARD
-      // ----------------------------------------------------
-      else if (curState === 'LEADERBOARD') {
-        ctx.shadowColor = '#00d4ff';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#00d4ff';
-        ctx.font = 'bold 28px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('COMBAT RANKINGS', CANVAS_SIZE / 2, 90);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#8888a0';
-        ctx.font = '12px "Exo 2", sans-serif';
-        ctx.fillText('TOP NEON COMBAT RATING', CANVAS_SIZE / 2, 120);
-
-        // Draw Headers
-        ctx.fillStyle = '#b4b4c8';
-        ctx.font = 'bold 13px "Orbitron", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText('RANK', 100, 170);
-        ctx.fillText('PLAYER ID', 170, 170);
-        ctx.textAlign = 'right';
-        ctx.fillText('RATING', 500, 170);
-
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(100, 185);
-        ctx.lineTo(500, 185);
-        ctx.stroke();
-
-        if (leaderboardLoading) {
-          ctx.textAlign = 'center';
-          ctx.fillStyle = '#8888a0';
-          ctx.font = '14px "Exo 2", sans-serif';
-          ctx.fillText('QUERYING NET NODES...', CANVAS_SIZE / 2, 280);
-        } else {
-          const list = leaderboard.length > 0 ? leaderboard : [
-            { username: "CYBER_NINJA", score: 800 },
-            { username: "NEON_RIDER", score: 710 },
-            { username: "RETRO_BOY", score: 620 },
-            { username: "GRID_RUNNER", score: 550 },
-            { username: "TTT_GOD", score: 480 }
-          ];
-
-          list.slice(0, 6).forEach((entry, idx) => {
-            const y = 215 + idx * 40;
-            ctx.font = '14px "Orbitron", monospace';
-            ctx.textAlign = 'left';
-            ctx.fillStyle = idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : '#b4b4c8';
-            ctx.fillText(String(idx + 1).padStart(2, '0'), 100, y);
-            ctx.fillText(entry.username || (entry.user && entry.user.username) || "PLAYER", 170, y);
-            ctx.textAlign = 'right';
-            ctx.fillText(String(entry.score), 500, y);
-          });
-        }
-
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#00d4ff';
-        ctx.strokeStyle = '#00d4ff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(CANVAS_SIZE / 2 - 120, 480, 240, 40);
-
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 16px "Orbitron", monospace';
-        ctx.fillText('BACK TO MENU', CANVAS_SIZE / 2, 505);
-      }
-
-      // ----------------------------------------------------
-      // STATE: PAUSE
-      // ----------------------------------------------------
-      else if (curState === 'PAUSE') {
-        drawBoard(ctx);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(5, 5, 10, 0.85)';
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-        ctx.shadowColor = '#ff007f';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#ff007f';
-        ctx.font = 'bold 36px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('SYSTEM PAUSED', CANVAS_SIZE / 2, 160);
-
-        const pauseItems = ['RESUME', 'RESTART', 'QUIT TO MENU'];
-        pauseItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 266 + idx * 60;
-
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 100, y - 26, 200, 36);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEOVER
-      // ----------------------------------------------------
-      else if (curState === 'GAMEOVER') {
-        drawBoard(ctx);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(5, 5, 10, 0.88)';
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-        ctx.shadowColor = '#00d4ff';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#00d4ff';
-        ctx.font = 'bold 34px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-
-        let resultTitle = 'COMBAT DRAW';
-        if (gameResultRef.current === 'X wins') {
-          resultTitle = 'PLAYER X WINS!';
-          ctx.shadowColor = '#00d4ff';
-          ctx.fillStyle = '#00d4ff';
-        } else if (gameResultRef.current === 'O wins') {
-          resultTitle = gameModeRef.current === 'cpu' ? 'CYBER CPU WINS!' : 'PLAYER O WINS!';
-          ctx.shadowColor = '#ff007f';
-          ctx.fillStyle = '#ff007f';
-        }
-        ctx.fillText(resultTitle, CANVAS_SIZE / 2, 110);
-
-        // Terminal style rewards logs
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.fillRect(80, 160, 440, 230);
-        ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
-        ctx.strokeRect(80, 160, 440, 230);
-
-        ctx.font = '13px "Courier New", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#00ff88';
-        ctx.fillText(`> Combat session closed.`, 100, 190);
-        ctx.fillText(`> Match Result: ${gameResultRef.current.toUpperCase()}`, 100, 210);
-
-        if (submitStatus === 'submitting') {
-          ctx.fillStyle = '#00d4ff';
-          ctx.fillText(`> Saving combat data to cloud network...`, 100, 240);
-          ctx.fillText(`> Synching transaction logs...`, 100, 260);
-        } else if (submitStatus === 'submitted' && rewards) {
-          ctx.fillStyle = '#00ff88';
-          ctx.fillText(`> DATA UPLOADED AND VERIFIED.`, 100, 240);
-          ctx.fillStyle = '#ffd700';
-          ctx.fillText(`> REWARDS CREDITED:`, 100, 270);
-          ctx.fillText(`  🪙 +${rewards.coinsEarned} Arcade Coins`, 100, 290);
-          ctx.fillText(`  ⚡ +${rewards.expGained} Experience Nodes`, 100, 310);
-          if (rewards.leveledUp) {
-            ctx.fillStyle = '#ff007f';
-            ctx.fillText(`  [NOTICE] LEVEL UP! New Level ${rewards.level}`, 100, 335);
-          }
-        } else if (submitStatus === 'failed') {
-          ctx.fillStyle = '#ff0055';
-          ctx.fillText(`> [ERROR] CONNECTION FAILURE`, 100, 240);
-          ctx.fillText(`> Unable to save highscore.`, 100, 260);
-        } else if (submitStatus === 'offline') {
-          ctx.fillStyle = '#ffaa00';
-          ctx.fillText(`> [NOTICE] OFFLINE SESSION`, 100, 240);
-          ctx.fillText(`> Authenticated player not found.`, 100, 260);
-          ctx.fillText(`> Log in to earn coins next match!`, 100, 280);
-        }
-
-        // Action Options
-        const gameOverItems = ['PLAY AGAIN', 'QUIT TO MENU'];
-        gameOverItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 470 + idx * 55;
-
-          ctx.textAlign = 'center';
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 130, y - 26, 260, 36);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEPLAY
-      // ----------------------------------------------------
-      else if (curState === 'GAMEPLAY') {
+      if (curState === 'PAUSE' || curState === 'GAMEOVER' || curState === 'GAMEPLAY') {
         drawBoard(ctx);
       }
 
@@ -913,6 +637,18 @@ const TTT = () => {
         <Link to="/UODGaming" className="floating-back-btn" title="Back to Games">
           <ArrowLeft size={20} />
         </Link>
+      ) : gameState === 'GAMEPLAY' ? (
+        <button 
+          className="floating-back-btn" 
+          title="Pause Game" 
+          onClick={() => {
+            playSound('click');
+            setGameState('PAUSE');
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <Pause size={20} />
+        </button>
       ) : null}
 
       <div className="game-content-card">
@@ -921,6 +657,137 @@ const TTT = () => {
           <div className="crt-scanlines"></div>
           <div className="crt-reflection"></div>
           <div className="crt-flicker"></div>
+
+          {/* DOM OVERLAYS */}
+          {gameState === 'LOBBY' && (
+            <div className="ttt-overlay">
+              <h1 className="ttt-title">NEON DUO COMBAT</h1>
+              <p className="ttt-subtitle">CROSS-GRID TIC TAC TOE ARCADE</p>
+              
+              <div className="ttt-menu">
+                <button 
+                  className={`ttt-btn ${menuIndex === 0 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(0)}
+                  onClick={() => { playSound('click'); setGameMode('cpu'); launchGameplay('cpu'); }}
+                >
+                  VS COMPUTER
+                </button>
+                <button 
+                  className={`ttt-btn ${menuIndex === 1 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(1)}
+                  onClick={() => { playSound('click'); setGameMode('duo'); launchGameplay('duo'); }}
+                >
+                  DUO COMBAT
+                </button>
+                <button 
+                  className={`ttt-btn ${menuIndex === 2 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(2)}
+                  onClick={() => { playSound('click'); setGameState('LEADERBOARD'); }}
+                >
+                  SYSTEM RANKINGS
+                </button>
+                <button 
+                  className={`ttt-btn ${menuIndex === 3 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(3)}
+                  onClick={() => { playSound('click'); window.location.href = '/UODGaming'; }}
+                >
+                  EXIT TO MENU
+                </button>
+              </div>
+            </div>
+          )}
+
+          {gameState === 'LEADERBOARD' && (
+            <div className="ttt-overlay">
+              <h1 className="ttt-title" style={{ fontSize: '28px' }}>COMBAT RANKINGS</h1>
+              <p className="ttt-subtitle">TOP NEON COMBAT RATING</p>
+
+              <div className="ttt-leaderboard-container">
+                {leaderboardLoading ? (
+                  <div className="ttt-leaderboard-item" style={{ justifyContent: 'center', color: '#8888a0' }}>QUERYING NET NODES...</div>
+                ) : (
+                  (leaderboard.length > 0 ? leaderboard : [
+                    { username: "CYBER_NINJA", score: 800 },
+                    { username: "NEON_RIDER", score: 710 },
+                    { username: "RETRO_BOY", score: 620 },
+                    { username: "GRID_RUNNER", score: 550 },
+                    { username: "TTT_GOD", score: 480 }
+                  ]).slice(0, 15).map((entry, idx) => (
+                    <div className="ttt-leaderboard-item" key={idx}>
+                      <span style={{ color: idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : '#b4b4c8', width: '30px' }}>{String(idx + 1).padStart(2, '0')}</span>
+                      <span style={{ flex: 1, textAlign: 'left', color: '#fff' }}>{entry.username || (entry.user && entry.user.username) || "PLAYER"}</span>
+                      <span style={{ color: '#00d4ff' }}>{entry.score}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="ttt-menu">
+                <button 
+                  className={`ttt-btn selected`}
+                  onClick={() => { playSound('click'); setGameState('LOBBY'); setMenuIndex(2); }}
+                >
+                  BACK TO MENU
+                </button>
+              </div>
+            </div>
+          )}
+
+          {gameState === 'PAUSE' && (
+            <div className="ttt-overlay" style={{ background: 'rgba(5, 5, 10, 0.96)' }}>
+              <h1 className="ttt-title" style={{ color: '#ff007f', textShadow: '0 0 15px rgba(255, 0, 127, 0.8)' }}>SYSTEM PAUSED</h1>
+              <p className="ttt-subtitle" style={{ marginBottom: '60px' }}></p>
+              
+              <div className="ttt-menu">
+                {['RESUME', 'RESTART', 'QUIT TO MENU'].map((text, idx) => (
+                  <button 
+                    key={idx}
+                    className={`ttt-btn ${menuIndex === idx ? 'selected' : ''}`}
+                    onMouseEnter={() => setMenuIndex(idx)}
+                    onClick={() => {
+                      playSound('click');
+                      if (idx === 0) setGameState('GAMEPLAY');
+                      else if (idx === 1) launchGameplay(gameMode);
+                      else { setGameState('LOBBY'); setMenuIndex(0); }
+                    }}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {gameState === 'GAMEOVER' && (
+            <div className="ttt-overlay" style={{ background: 'rgba(5, 5, 10, 0.96)' }}>
+              <h1 className="ttt-title" style={{ 
+                color: gameResultRef.current === 'X wins' ? '#00d4ff' : gameResultRef.current === 'O wins' ? '#ff007f' : '#00d4ff', 
+                textShadow: gameResultRef.current === 'X wins' ? '0 0 15px #00d4ff' : gameResultRef.current === 'O wins' ? '0 0 15px #ff007f' : '0 0 15px #00d4ff',
+                fontSize: '34px' 
+              }}>
+                {gameResultRef.current === 'X wins' ? 'PLAYER X WINS!' : gameResultRef.current === 'O wins' ? (gameModeRef.current === 'cpu' ? 'CYBER CPU WINS!' : 'PLAYER O WINS!') : 'COMBAT DRAW'}
+              </h1>
+              <p className="ttt-subtitle" style={{ color: '#00ff88', fontSize: '18px', marginBottom: '5px' }}>PLAYER X: {scores.X}  |  PLAYER O: {scores.O}</p>
+              <p className="ttt-subtitle" style={{ color: '#ffaa00', fontSize: '16px', marginBottom: '40px' }}>DRAWS: {scores.draws}</p>
+              
+              <div className="ttt-menu">
+                {['PLAY AGAIN', 'QUIT TO MENU'].map((text, idx) => (
+                  <button 
+                    key={idx}
+                    className={`ttt-btn ${menuIndex === idx ? 'selected' : ''}`}
+                    onMouseEnter={() => setMenuIndex(idx)}
+                    onClick={() => {
+                      playSound('click');
+                      if (idx === 0) launchGameplay(gameMode);
+                      else { setGameState('LOBBY'); setMenuIndex(0); }
+                    }}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* HUD Scoreboard Strip */}
           {gameState === 'GAMEPLAY' && (
@@ -948,7 +815,7 @@ const TTT = () => {
             ref={canvasRef} 
             width={CANVAS_SIZE} 
             height={CANVAS_SIZE}
-            style={{ display: 'block', background: '#020205', width: '100%', height: 'auto', maxWidth: '600px' }}
+            style={{ display: 'block', background: '#020205', width: '100%', height: 'auto', maxWidth: '650px' }}
           />
         </div>
       </div>

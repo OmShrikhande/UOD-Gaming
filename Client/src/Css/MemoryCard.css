@@ -86,3 +86,105 @@
     max-width: 100%;
   }
 }
+
+/* --- DOM UI OVERLAYS --- */
+.memorycard-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(2, 2, 5, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: var(--radius-lg, 12px);
+}
+
+.memorycard-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.memorycard-btn {
+  background: transparent;
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  color: #8888a0;
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.memorycard-btn:hover, .memorycard-btn:focus, .memorycard-btn.selected {
+  border-color: #00f0f0;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 240, 240, 0.4);
+  text-shadow: 0 0 8px rgba(0, 240, 240, 0.8);
+  outline: none;
+}
+
+.memorycard-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 36px;
+  font-weight: bold;
+  color: #00d4ff;
+  text-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.memorycard-subtitle {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 14px;
+  color: #b4b4c8;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.memorycard-leaderboard-container {
+  width: 90%;
+  max-width: 400px;
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.memorycard-leaderboard-container::-webkit-scrollbar {
+  width: 6px;
+}
+.memorycard-leaderboard-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.memorycard-leaderboard-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.5);
+  border-radius: 3px;
+}
+
+.memorycard-leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #fff;
+}
+.memorycard-leaderboard-item:last-child {
+  border-bottom: none;
+}

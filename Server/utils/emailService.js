@@ -1,9 +1,14 @@
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import { format } from 'date-fns';
+import logger from '../config/logger.js';
 
 // Create email transporter
 const createTransporter = () => {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+        logger.error('CRITICAL: EMAIL_USER or EMAIL_PASSWORD environment variables are missing.');
+        throw new Error('Email credentials are not properly configured.');
+    }
     return nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -261,15 +266,15 @@ export const sendPaymentVerificationRequest = async (paymentData) => {
         
         await transporter.sendMail({
             from: `"UOD Gaming" <${process.env.EMAIL_USER}>`,
-            to: process.env.ADMIN_EMAIL || 'omshrikhande73@gmail.com',
+            to: process.env.ADMIN_EMAIL,
             subject: template.subject,
             html: template.html
         });
         
-        console.log('Payment verification email sent to admin');
+        logger.info('Payment verification email sent to admin');
         return true;
     } catch (error) {
-        console.error('Error sending payment verification email:', error);
+        logger.error('Error sending payment verification email:', error);
         return false;
     }
 };
@@ -286,10 +291,10 @@ export const sendPaymentConfirmation = async (userData, paymentData) => {
             html: template.html
         });
         
-        console.log('Payment confirmation email sent to user');
+        logger.info('Payment confirmation email sent to user');
         return true;
     } catch (error) {
-        console.error('Error sending payment confirmation email:', error);
+        logger.error('Error sending payment confirmation email:', error);
         return false;
     }
 };
@@ -306,10 +311,10 @@ export const sendPaymentVerified = async (userData, paymentData) => {
             html: template.html
         });
         
-        console.log('Payment verified email sent to user');
+        logger.info('Payment verified email sent to user');
         return true;
     } catch (error) {
-        console.error('Error sending payment verified email:', error);
+        logger.error('Error sending payment verified email:', error);
         return false;
     }
 };
@@ -326,10 +331,10 @@ export const sendPaymentRejected = async (userData, paymentData, reason) => {
             html: template.html
         });
         
-        console.log('Payment rejected email sent to user');
+        logger.info('Payment rejected email sent to user');
         return true;
     } catch (error) {
-        console.error('Error sending payment rejected email:', error);
+        logger.error('Error sending payment rejected email:', error);
         return false;
     }
 };
@@ -346,10 +351,10 @@ export const sendWelcomeSupporter = async (userData) => {
             html: template.html
         });
         
-        console.log('Welcome supporter email sent to user');
+        logger.info('Welcome supporter email sent to user');
         return true;
     } catch (error) {
-        console.error('Error sending welcome supporter email:', error);
+        logger.error('Error sending welcome supporter email:', error);
         return false;
     }
 };

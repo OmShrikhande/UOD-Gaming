@@ -15,6 +15,7 @@ import BrickBreaker from './Components/BrickBreaker'
 import CyberFalcon from './Components/CyberFalcon'
 import TowerStack from './Components/TowerStack'
 import SchulteGrid from './Components/SchulteGrid'
+import SpaceObstacle from './Components/SpaceObstacle'
 import ConstellationBackground from './Components/ConstellationBackground';
 
 // Import global styles
@@ -65,9 +66,11 @@ const App = () => {
         <Route path="/MemoryCard" element={<MemoryCard />} />  
         <Route path="/Tetris" element={<Tetris />} />  
         <Route path="/Breakout" element={<BrickBreaker />} />  
+
         <Route path="/Falcon" element={<CyberFalcon />} />  
         <Route path="/Stack" element={<TowerStack />} />  
         <Route path="/GridRush" element={<SchulteGrid />} />  
+        <Route path="/SpaceObstacle" element={<SpaceObstacle />} />  
       </Routes>            
 
       

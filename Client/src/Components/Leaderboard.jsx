@@ -27,7 +27,7 @@ const Leaderboard = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = 'cookie-token';
     if (token) {
       setIsLoggedIn(true);
     }

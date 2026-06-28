@@ -28,7 +28,7 @@ export const upload = multer({
     fileSize: 100 * 1024 * 1024, // 100MB limit
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ['.zip', '.rar', '.7z', '.html', '.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.wav', '.ogg'];
+    const allowedTypes = ['.zip', '.rar', '.7z', '.css', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.wav', '.ogg'];
     const fileExtension = path.extname(file.originalname).toLowerCase();
     
     if (allowedTypes.includes(fileExtension)) {

@@ -284,15 +284,15 @@ export const handleValidationErrors = (req, res, next) => {
  * CSRF Protection
  */
 export const csrfProtection = (req, res, next) => {
-  // Skip CSRF for API endpoints in development
-  if (process.env.NODE_ENV === 'development') {
+  // Skip CSRF for safe methods
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
     return next();
   }
   
   const token = req.headers['x-csrf-token'] || req.body._csrf;
-  const sessionToken = req.session?.csrfToken;
+  const cookieToken = req.cookies?.csrfToken;
   
-  if (!token || !sessionToken || token !== sessionToken) {
+  if (!token || !cookieToken || token !== cookieToken) {
     return res.status(403).json({
       success: false,
       message: 'Invalid CSRF token'
@@ -321,7 +321,7 @@ export const securityHeaders = (req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), fullscreen=(self)');
   
   // Add custom application headers
   res.setHeader('X-API-Version', process.env.API_VERSION || '2.0.0');

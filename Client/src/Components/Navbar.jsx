@@ -6,6 +6,7 @@ import {
   Volume2,
   VolumeX
 } from 'lucide-react';
+import axios from 'axios';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
@@ -26,7 +27,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const loadUser = () => {
-    const token = localStorage.getItem('token');
+    const token = 'cookie-token';
     const storedUser = localStorage.getItem('user');
     setIsLoggedIn(!!token);
     if (storedUser) {
@@ -50,8 +51,12 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/v1/auth/logout');
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
     localStorage.removeItem('user');
     window.dispatchEvent(new Event('user-stats-changed'));
     setIsOpen(false);
@@ -112,6 +117,34 @@ const Navbar = () => {
                 <span className="logo-secondary">Gaming</span>
               </span>
             </Link>
+          </div>
+
+          {/* Desktop Navigation Links */}
+          <div className="navbar-desktop-links">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              if (item.path === '/logout') {
+                return (
+                  <Link 
+                    key={item.path}
+                    to="/" 
+                    className="desktop-nav-link"
+                    onClick={handleLogout}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              }
+              return (
+                <Link 
+                  key={item.path}
+                  to={item.path} 
+                  className={`desktop-nav-link ${isActive ? 'active' : ''}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Controls Wrapper */}

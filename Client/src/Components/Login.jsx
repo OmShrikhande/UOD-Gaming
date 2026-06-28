@@ -164,9 +164,6 @@ const Login = () => {
         password: loginData.password
       });
 
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-      }
       if (response.data.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
@@ -205,9 +202,6 @@ const Login = () => {
 
       setSuccess('Account created successfully! Auto-logging you in...');
       
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-      }
       if (response.data.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }

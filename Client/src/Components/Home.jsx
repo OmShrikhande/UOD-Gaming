@@ -86,7 +86,6 @@ const Home = () => {
         
         <div className="hero-content container">
           <div className="hero-left">
-            <span className="hero-meta-label">[ INTERACTIVE SHOWROOM v2.0 ]</span>
             
             {/* Kinetic Masked Title */}
             <h1 className="hero-title">
@@ -105,15 +104,6 @@ const Home = () => {
               ))}
             </h1>
 
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="hero-subtitle"
-            >
-              Step into a digital web simulation engineered for latency-free nostalgic retro gaming. 
-              No downloads needed. Instant canvas rendering powered by Web Audio sound synthesis.
-            </motion.p>
 
             <motion.div 
               initial={{ opacity: 0, y: 20 }}

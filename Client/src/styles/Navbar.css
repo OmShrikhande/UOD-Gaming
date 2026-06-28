@@ -368,8 +368,44 @@
   color: var(--text-muted);
 }
 
+/* Desktop Navigation Links */
+.navbar-desktop-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+.desktop-nav-link {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+.desktop-nav-link:hover, .desktop-nav-link.active {
+  color: var(--primary-neon);
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
 /* Responsive Design styles */
+@media (min-width: 1025px) {
+  .menu-hamburger-btn {
+    display: none;
+  }
+  .fullscreen-nav-overlay {
+    display: none !important;
+  }
+}
+
 @media (max-width: 1024px) {
+  .navbar-desktop-links {
+    display: none;
+  }
+
   .overlay-container {
     grid-template-columns: 1fr;
     gap: var(--space-2xl);

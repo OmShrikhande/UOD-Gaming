@@ -18,7 +18,7 @@ export const createToken = (id, email) => {
 
 export const isAuthenticated = (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
+        const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
 
         if (!token) {
             return res.status(401).json({
@@ -71,7 +71,7 @@ export const isAuthenticated = (req, res, next) => {
 // Optional authentication - doesn't fail if no token
 export const optionalAuth = (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
+        const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
 
         if (!token) {
             req.user = null;

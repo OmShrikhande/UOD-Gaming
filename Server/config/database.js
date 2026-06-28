@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { createRequire } from 'module';
+import logger from './logger.js';
 
 const require = createRequire(import.meta.url);
 
@@ -20,6 +21,9 @@ class DatabaseConnection {
    */
   async connect() {
     try {
+      // Prevent NoSQL query selector injections
+      mongoose.set('strictQuery', true);
+
       // Enhanced connection options for production-ready setup
       const options = {
         // useNewUrlParser: true,
@@ -74,10 +78,10 @@ class DatabaseConnection {
       // Set up graceful shutdown
       this.setupGracefulShutdown();
       
-      console.log('🎮 Database connection established successfully!');
+      logger.info('🎮 Database connection established successfully!');
       
     } catch (error) {
-      console.error('❌ Database connection failed:', error);
+      logger.error('❌ Database connection failed:', error);
       throw error;
     }
   }
@@ -94,13 +98,13 @@ class DatabaseConnection {
         return;
       } catch (error) {
         this.connectionAttempts++;
-        console.error(`❌ Connection attempt ${this.connectionAttempts} failed:`, error.message);
+        logger.error(`❌ Connection attempt ${this.connectionAttempts} failed:`, error.message);
         
         if (this.connectionAttempts >= this.maxRetries) {
           throw new Error(`Failed to connect to database after ${this.maxRetries} attempts`);
         }
         
-        console.log(`⏳ Retrying in ${this.retryDelay / 1000} seconds...`);
+        logger.info(`⏳ Retrying in ${this.retryDelay / 1000} seconds...`);
         await new Promise(resolve => setTimeout(resolve, this.retryDelay));
         
         // Exponential backoff
@@ -114,17 +118,17 @@ class DatabaseConnection {
    */
   setupEventListeners() {
     mongoose.connection.on('connected', () => {
-      console.log('✅ Mongoose connected to MongoDB');
+      logger.info('✅ Mongoose connected to MongoDB');
       this.isConnected = true;
     });
 
     mongoose.connection.on('error', (err) => {
-      console.error('❌ Mongoose connection error:', err);
+      logger.error('❌ Mongoose connection error:', err);
       this.isConnected = false;
     });
 
     mongoose.connection.on('disconnected', () => {
-      console.log('⚠️  Mongoose disconnected from MongoDB');
+      logger.info('⚠️  Mongoose disconnected from MongoDB');
       this.isConnected = false;
       
       // Attempt to reconnect
@@ -134,13 +138,13 @@ class DatabaseConnection {
     });
 
     mongoose.connection.on('reconnected', () => {
-      console.log('🔄 Mongoose reconnected to MongoDB');
+      logger.info('🔄 Mongoose reconnected to MongoDB');
       this.isConnected = true;
     });
 
     // Monitor connection pool
     mongoose.connection.on('fullsetup', () => {
-      console.log('🔗 MongoDB replica set connection established');
+      logger.info('🔗 MongoDB replica set connection established');
     });
   }
 
@@ -149,11 +153,11 @@ class DatabaseConnection {
    */
   async reconnect() {
     if (!this.isConnected && this.connectionAttempts < this.maxRetries) {
-      console.log('🔄 Attempting to reconnect to database...');
+      logger.info('🔄 Attempting to reconnect to database...');
       try {
         await this.connectWithRetry({});
       } catch (error) {
-        console.error('❌ Reconnection failed:', error);
+        logger.error('❌ Reconnection failed:', error);
       }
     }
   }
@@ -163,14 +167,14 @@ class DatabaseConnection {
    */
   setupGracefulShutdown() {
     const gracefulShutdown = async (signal) => {
-      console.log(`\n📡 Received ${signal}. Closing database connection...`);
+      logger.info(`\n📡 Received ${signal}. Closing database connection...`);
       
       try {
         await mongoose.connection.close();
-        console.log('✅ Database connection closed successfully');
+        logger.info('✅ Database connection closed successfully');
         process.exit(0);
       } catch (error) {
-        console.error('❌ Error closing database connection:', error);
+        logger.error('❌ Error closing database connection:', error);
         process.exit(1);
       }
     };

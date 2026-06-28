@@ -59,6 +59,11 @@ This report provides a comprehensive, deep-dive analysis of the **UOD Gaming** c
     *   **Description:** The code uses `GlobalLeaderboard.distinct('user.profile.country')` and queries the database for `{ 'user.profile.country': country }`. The `user` object is not a schema field in the database; it is only joined at runtime during aggregation via `$lookup`.
     *   **Impact:** The periodic cron update of global rankings fails to calculate or update country rankings, leading to empty or corrupted rankings.
 
+9.  **NoSQL Injection via Mass Assignment**
+    *   **Files:** `auth.controller.js` and `group.controller.js`
+    *   **Description:** The endpoints for updating user profiles and groups accept `req.body` directly as `updates` and spread them into Mongoose's `findByIdAndUpdate`. While some sensitive fields are manually deleted, it does not prevent the injection of MongoDB operators like `$inc` or `$push` at the top level of the JSON payload.
+    *   **Impact:** Attackers could manipulate MongoDB operators to modify arbitrary arrays or increment values unexpectedly in the database document.
+
 ---
 
 ## High Priority Improvements
@@ -120,6 +125,11 @@ This report provides a comprehensive, deep-dive analysis of the **UOD Gaming** c
     *   **Files:** [Snake.jsx](file:///c:/Users/aryas/Downloads/Planitt/UOD-Gaming/Client/src/Components/Snake.jsx#L171-L179), [TTT.jsx](file:///c:/Users/aryas/Downloads/Planitt/UOD-Gaming/Client/src/Components/TTT.jsx#L95-L99)
     *   **Description:** The Snake game renders duplicate `<body>` tags inside the component wrapper. TTT uses `for` instead of `htmlFor` on labels.
     *   **Action Required:** Standardize JSX elements and remove invalid DOM hierarchies.
+
+4.  **Leftover `console.log` Statements**
+    *   **Files:** `index.js`, `config/database.js`, `utils/emailService.js`
+    *   **Description:** Despite having a custom Winston logger configuration (`logger.info`, `logger.error`), several leftover `console.log` statements remain scattered in production backend code.
+    *   **Action Required:** Replace all `console.log` statements with the appropriate Winston logger methods.
 
 ---
 

@@ -2,6 +2,19 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'; // Import BrowserRouter
 import App from './App.jsx'
+import axios from 'axios';
+
+// Configure Axios globally
+axios.defaults.withCredentials = true;
+
+// Fetch CSRF token on startup
+axios.get('/api/v1/auth/csrf-token')
+  .then(res => {
+    if (res.data && res.data.csrfToken) {
+      axios.defaults.headers.common['x-csrf-token'] = res.data.csrfToken;
+    }
+  })
+  .catch(err => console.error('Failed to fetch CSRF token:', err));
 
 // Import AOS for scroll animations
 import AOS from 'aos';

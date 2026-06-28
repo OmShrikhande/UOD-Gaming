@@ -1,6 +1,8 @@
 import express from "express";
 import {
   loginUser,
+  logoutUser,
+  getCsrfToken,
   isLogin,
   getAllUsers,
   registerUser,
@@ -23,6 +25,8 @@ const router = express.Router();
 // Public routes
 router.post('/signup', validateUserRegistration, registerUser);
 router.post('/login', validateUserLogin, loginUser);
+router.post('/logout', logoutUser);
+router.get('/csrf-token', getCsrfToken);
 
 // Protected routes
 router.get('/profile', isAuthenticated, isLogin);

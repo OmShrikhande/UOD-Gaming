@@ -90,16 +90,17 @@ const GameIcon = ({ title }) => {
       return (
         <svg viewBox="0 0 100 100" className="game-icon-svg">
           {glowFilter}
-          <rect x="15" y="20" width="18" height="7" rx="1.5" stroke="#00d4ff" strokeWidth="2" fill="rgba(0, 212, 255, 0.05)" filter="url(#icon-glow)" />
-          <rect x="37" y="20" width="18" height="7" rx="1.5" stroke="#ff006e" strokeWidth="2" fill="rgba(255, 0, 110, 0.05)" filter="url(#icon-glow)" />
-          <rect x="59" y="20" width="18" height="7" rx="1.5" stroke="#00ff88" strokeWidth="2" fill="rgba(0, 255, 136, 0.05)" filter="url(#icon-glow)" />
-          <rect x="25" y="32" width="18" height="7" rx="1.5" stroke="#ffff00" strokeWidth="2" fill="rgba(255, 255, 0, 0.05)" filter="url(#icon-glow)" />
-          <rect x="47" y="32" width="18" height="7" rx="1.5" stroke="#8b5cf6" strokeWidth="2" fill="rgba(139, 92, 246, 0.05)" filter="url(#icon-glow)" />
-          <line x1="30" y1="75" x2="60" y2="75" stroke="#00ff88" strokeWidth="4" strokeLinecap="round" filter="url(#icon-glow)" />
-          <circle cx="43" cy="58" r="3.5" fill="#ffffff" filter="url(#icon-glow)" />
-          <line x1="43" y1="58" x2="45" y2="73" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1.5" strokeDasharray="3,3" />
+          <rect x="20" y="25" width="20" height="8" rx="2" stroke="#00d4ff" strokeWidth="2.5" fill="rgba(0,212,255,0.1)" filter="url(#icon-glow)" />
+          <rect x="44" y="25" width="20" height="8" rx="2" stroke="#ff007f" strokeWidth="2.5" fill="rgba(255,0,127,0.1)" filter="url(#icon-glow)" />
+          <rect x="68" y="25" width="20" height="8" rx="2" stroke="#00ff88" strokeWidth="2.5" fill="rgba(0,255,136,0.1)" filter="url(#icon-glow)" />
+          <rect x="32" y="38" width="20" height="8" rx="2" stroke="#ffff00" strokeWidth="2.5" fill="rgba(255,255,0,0.1)" filter="url(#icon-glow)" />
+          <rect x="56" y="38" width="20" height="8" rx="2" stroke="#8b5cf6" strokeWidth="2.5" fill="rgba(139,92,246,0.1)" filter="url(#icon-glow)" />
+          <line x1="30" y1="75" x2="70" y2="75" stroke="#00d4ff" strokeWidth="5" strokeLinecap="round" filter="url(#icon-glow)" />
+          <circle cx="50" cy="60" r="4" fill="#ffffff" filter="url(#icon-glow)" />
+          <path d="M 50 60 L 55 46" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeDasharray="3,2" />
         </svg>
       );
+
     case "Cyber Falcon":
       return (
         <svg viewBox="0 0 100 100" className="game-icon-svg">
@@ -143,6 +144,16 @@ const GameIcon = ({ title }) => {
           <text x="28.5" y="75" fill="rgba(255,255,255,0.3)" fontSize="11" textAnchor="middle">6</text>
           <text x="50" y="75" fill="rgba(255,255,255,0.3)" fontSize="11" textAnchor="middle">18</text>
           <text x="71.5" y="75" fill="rgba(255,255,255,0.3)" fontSize="11" textAnchor="middle">5</text>
+        </svg>
+      );
+    case "Space Obstacle":
+      return (
+        <svg viewBox="0 0 100 100" className="game-icon-svg">
+          {glowFilter}
+          <polygon points="50,20 20,80 50,65 80,80" fill="#00ff88" filter="url(#icon-glow)" />
+          <circle cx="20" cy="30" r="8" fill="none" stroke="#ea580c" strokeWidth="2" filter="url(#icon-glow)" />
+          <circle cx="80" cy="40" r="12" fill="none" stroke="#ea580c" strokeWidth="2" filter="url(#icon-glow)" />
+          <circle cx="30" cy="15" r="5" fill="none" stroke="#ea580c" strokeWidth="2" filter="url(#icon-glow)" />
         </svg>
       );
     default:
@@ -234,6 +245,7 @@ const UODGaming = () => {
       featured: false,
       path: "/Tetris",
       tags: ["Retro", "Puzzle", "Singleplayer"]
+
     },
     {
       id: 6,
@@ -241,7 +253,7 @@ const UODGaming = () => {
       category: "action",
       rating: 4.9,
       players: "1.4M",
-      description: "Classic physics breakout brick bouncer. Control the safety paddle to break lines of glowing neon glass bricks!",
+      description: "Completely redesigned physics breakout bouncer! Control the neon paddle to destroy glass bricks with particles and screen shake!",
       downloads: "3.5M",
       lastUpdated: "Just now",
       featured: false,
@@ -286,6 +298,19 @@ const UODGaming = () => {
       featured: false,
       path: "/GridRush",
       tags: ["Logic", "Reflex", "Casual"]
+    },
+    {
+      id: 10,
+      title: "Space Obstacle",
+      category: "action",
+      rating: 4.8,
+      players: "500K",
+      description: "Top-down endless space runner! Pilot a neon ship, dodge procedurally generated asteroids, and survive the scrolling starfield!",
+      downloads: "1.2M",
+      lastUpdated: "Just now",
+      featured: true,
+      path: "/SpaceObstacle",
+      tags: ["Endless", "Survival", "Action"]
     }
   ]);
 
@@ -303,7 +328,8 @@ const UODGaming = () => {
             "Neon Brick Breaker": "/Breakout",
             "Cyber Falcon": "/Falcon",
             "Neon Stack Tower": "/Stack",
-            "Cyber Grid 1-25": "/GridRush"
+            "Cyber Grid 1-25": "/GridRush",
+            "Space Obstacle": "/SpaceObstacle"
           };
 
           const mappedGames = res.data.games.map(game => ({
@@ -424,66 +450,42 @@ const UODGaming = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="hero-meta-label">[ ARCHIVE REPOSITORY ]</span>
             <h1 className="hero-title">
               THE RETRO CABINETS
             </h1>
-            <p className="hero-subtitle">
-              Interactive 60fps singleplayer simulators engineered with Web Audio synthesizer feedback
-            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Filters and Search */}
+      {/* Filters Section */}
       <section className="games-filters">
-        <div className="container">
-          <div className="filters-container">
-            <div className="search-section">
-              <div className="search-input-wrapper">
-                <Search className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search retro archive..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
-              </div>
-            </div>
-
-            <div className="filter-section">
-              <div className="category-filters">
-                {categories.map(category => {
-                  const Icon = category.icon;
-                  return (
-                    <motion.button
-                      key={category.id}
-                      className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-                      onClick={() => setSelectedCategory(category.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Icon size={16} />
-                      <span>{category.label}</span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              <div className="view-controls">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="sort-select"
-                >
-                  <option value="popular">Most Popular</option>
-                  <option value="rating">Highest Rated</option>
-                  <option value="players">Most Players</option>
-                  <option value="downloads">Most Downloaded</option>
-                  <option value="newest">Recently Updated</option>
-                </select>
-              </div>
+        <div className="filters-container">
+          <div className="search-input-wrapper">
+            <Search className="search-icon" size={18} />
+            <input 
+              type="text" 
+              className="search-input" 
+              placeholder="Search games by title or tag..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          <div className="filter-section">
+            <div className="category-filters">
+              {categories.map(cat => {
+                const Icon = cat.icon;
+                return (
+                  <button 
+                    key={cat.id}
+                    className={`category-btn ${selectedCategory === cat.id ? 'active' : ''}`}
+                    onClick={() => setSelectedCategory(cat.id)}
+                  >
+                    <Icon size={16} />
+                    <span>{cat.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

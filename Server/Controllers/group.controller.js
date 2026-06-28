@@ -475,7 +475,7 @@ export const updateGroup = async (req, res) => {
   try {
     const { groupId } = req.params;
     const userId = req.user._id;
-    const updates = req.body;
+    const rawUpdates = req.body;
 
     const group = await Group.findById(groupId);
     if (!group) {
@@ -494,12 +494,16 @@ export const updateGroup = async (req, res) => {
       });
     }
 
-    // Remove sensitive fields from updates
-    delete updates.creator;
-    delete updates.members;
-    delete updates.statistics;
+    // Strict whitelist of allowed fields to prevent Mass Assignment
+    const allowedFields = ['name', 'description', 'avatar', 'type', 'tags', 'settings'];
+    const safeUpdates = {};
+    allowedFields.forEach(field => {
+      if (rawUpdates[field] !== undefined) {
+        safeUpdates[field] = rawUpdates[field];
+      }
+    });
 
-    Object.assign(group, updates);
+    Object.assign(group, safeUpdates);
     group.updatedAt = new Date();
     await group.save();
 

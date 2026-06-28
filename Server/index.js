@@ -6,6 +6,9 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import compression from "compression";
 import morgan from "morgan";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import cookieParser from "cookie-parser";
 
 // Import enhanced configurations
 import dbConnection from "./config/database.js";
@@ -13,7 +16,8 @@ import {
   helmetConfig, 
   rateLimiters, 
   securityHeaders, 
-  sanitizeRequest 
+  sanitizeRequest,
+  csrfProtection
 } from "./config/security.js";
 import { 
   logger, 
@@ -156,6 +160,16 @@ app.use(express.urlencoded({
     parameterLimit: 1000
 }));
 
+// Cookie parsing middleware
+app.use(cookieParser());
+
+// Global sanitization against NoSQL injection and XSS
+app.use(mongoSanitize());
+app.use(xss());
+
+// CSRF Protection
+app.use(csrfProtection);
+
 // Trust proxy for rate limiting and real IP detection
 app.set('trust proxy', process.env.NODE_ENV === 'production' ? 1 : false);
 
@@ -179,7 +193,7 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads'), {
 
 // Enhanced rate limiting
 app.use('/api/v1/auth/login', rateLimiters.auth);
-app.use('/api/v1/auth/register', rateLimiters.auth);
+app.use('/api/v1/auth/signup', rateLimiters.auth);
 app.use('/api/v1/auth/forgot-password', rateLimiters.passwordReset);
 app.use('/api/v1/payments', rateLimiters.payment);
 app.use('/api/v1/games/upload', rateLimiters.upload);
@@ -238,24 +252,24 @@ app.get('/api/health', async (req, res) => {
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    logger.info(`User connected: ${socket.id}`);
 
     // Join user to their personal room
     socket.on('join_user', (userId) => {
         socket.join(`user_${userId}`);
-        console.log(`User ${userId} joined personal room`);
+        logger.info(`User ${userId} joined personal room`);
     });
 
     // Join group chat room
     socket.on('join_group', (groupId) => {
         socket.join(`group_${groupId}`);
-        console.log(`User joined group ${groupId}`);
+        logger.info(`User joined group ${groupId}`);
     });
 
     // Leave group chat room
     socket.on('leave_group', (groupId) => {
         socket.leave(`group_${groupId}`);
-        console.log(`User left group ${groupId}`);
+        logger.info(`User left group ${groupId}`);
     });
 
     // Handle typing indicators
@@ -294,7 +308,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        console.log(`User disconnected: ${socket.id}`);
+        logger.info(`User disconnected: ${socket.id}`);
         // Handle offline status here if needed
     });
 });

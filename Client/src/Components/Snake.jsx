@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pause } from 'lucide-react';
 import axios from 'axios';
 import '../Css/Snake.css';
@@ -63,6 +63,7 @@ const playSound = (type, muted = false) => {
 
 const Snake = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [gameId, setGameId] = useState(null);
 
   // Fetch Game ID
@@ -152,7 +153,7 @@ const Snake = () => {
 
   // Submit high score
   const submitScore = async (finalScore) => {
-    const token = localStorage.getItem('token');
+    const token = 'cookie-token';
     if (gameId && token) {
       setSubmitStatus('submitting');
       try {
@@ -343,30 +344,40 @@ const Snake = () => {
     if (curState === 'LOBBY') {
       if (code === 'ArrowUp' || code === 'KeyW') {
         playSound('click', isMuted);
-        setMenuIndex(prev => (prev === 0 ? 3 : prev - 1));
+        setMenuIndex(prev => {
+          const next = prev === 0 ? 4 : prev - 1;
+          menuIndexRef.current = next;
+          return next;
+        });
       } else if (code === 'ArrowDown' || code === 'KeyS') {
         playSound('click', isMuted);
-        setMenuIndex(prev => (prev === 3 ? 0 : prev + 1));
+        setMenuIndex(prev => {
+          const next = prev === 4 ? 0 : prev + 1;
+          menuIndexRef.current = next;
+          return next;
+        });
       } else if (code === 'ArrowLeft' || code === 'KeyA') {
         playSound('click', isMuted);
-        if (menuIndex === 1) {
+        if (menuIndexRef.current === 1) {
           setDifficulty(prev => prev === 'hard' ? 'medium' : prev === 'medium' ? 'easy' : 'hard');
-        } else if (menuIndex === 2) {
+        } else if (menuIndexRef.current === 2) {
           setIsMuted(prev => !prev);
         }
       } else if (code === 'ArrowRight' || code === 'KeyD') {
         playSound('click', isMuted);
-        if (menuIndex === 1) {
+        if (menuIndexRef.current === 1) {
           setDifficulty(prev => prev === 'easy' ? 'medium' : prev === 'medium' ? 'hard' : 'easy');
-        } else if (menuIndex === 2) {
+        } else if (menuIndexRef.current === 2) {
           setIsMuted(prev => !prev);
         }
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click', isMuted);
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           launchGameplay();
-        } else if (menuIndex === 3) {
+        } else if (menuIndexRef.current === 3) {
           setGameState('LEADERBOARD');
+        } else if (menuIndexRef.current === 4) {
+          window.location.href = '/UODGaming';
         }
       }
     } else if (curState === 'LEADERBOARD') {
@@ -384,13 +395,12 @@ const Snake = () => {
         setMenuIndex(prev => (prev === 2 ? 0 : prev + 1));
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click', isMuted);
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           setGameState('GAMEPLAY');
-        } else if (menuIndex === 1) {
+        } else if (menuIndexRef.current === 1) {
           launchGameplay();
-        } else if (menuIndex === 2) {
-          setGameState('LOBBY');
-          setMenuIndex(0);
+        } else if (menuIndexRef.current === 2) {
+          navigate('/UODGaming');
         }
       } else if (code === 'Escape') {
         playSound('click', isMuted);
@@ -402,11 +412,10 @@ const Snake = () => {
         setMenuIndex(prev => (prev === 0 ? 1 : 0));
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click', isMuted);
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           launchGameplay();
         } else {
-          setGameState('LOBBY');
-          setMenuIndex(0);
+          navigate('/UODGaming');
         }
       }
     } else if (curState === 'GAMEPLAY') {
@@ -448,75 +457,8 @@ const Snake = () => {
 
   // Mouse hover & click triggers on Canvas
   const handleCanvasClick = (e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    // Get click coords relative to canvas
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = CANVAS_SIZE / rect.width;
-    const scaleY = CANVAS_SIZE / rect.height;
-    const clickX = (e.clientX - rect.left) * scaleX;
-    const clickY = (e.clientY - rect.top) * scaleY;
-
-    const curState = gameState;
-    if (curState === 'LOBBY') {
-      // START RUN
-      if (clickX >= 150 && clickX <= 450 && clickY >= 280 && clickY <= 320) {
-        playSound('click', isMuted);
-        launchGameplay();
-      }
-      // DIFFICULTY
-      else if (clickX >= 100 && clickX <= 500 && clickY >= 340 && clickY <= 380) {
-        playSound('click', isMuted);
-        setDifficulty(prev => prev === 'easy' ? 'medium' : prev === 'medium' ? 'hard' : 'easy');
-      }
-      // AUDIO
-      else if (clickX >= 100 && clickX <= 500 && clickY >= 400 && clickY <= 440) {
-        playSound('click', isMuted);
-        setIsMuted(prev => !prev);
-      }
-      // LEADERBOARD
-      else if (clickX >= 150 && clickX <= 450 && clickY >= 460 && clickY <= 500) {
-        playSound('click', isMuted);
-        setGameState('LEADERBOARD');
-      }
-    } else if (curState === 'LEADERBOARD') {
-      if (clickX >= 180 && clickX <= 420 && clickY >= 490 && clickY <= 530) {
-        playSound('click', isMuted);
-        setGameState('LOBBY');
-        setMenuIndex(3);
-      }
-    } else if (curState === 'PAUSE') {
-      // RESUME
-      if (clickX >= 200 && clickX <= 400 && clickY >= 240 && clickY <= 280) {
-        playSound('click', isMuted);
-        setGameState('GAMEPLAY');
-      }
-      // RESTART
-      else if (clickX >= 200 && clickX <= 400 && clickY >= 300 && clickY <= 340) {
-        playSound('click', isMuted);
-        launchGameplay();
-      }
-      // EXIT
-      else if (clickX >= 200 && clickX <= 400 && clickY >= 360 && clickY <= 400) {
-        playSound('click', isMuted);
-        setGameState('LOBBY');
-        setMenuIndex(0);
-      }
-    } else if (curState === 'GAMEOVER') {
-      // PLAY AGAIN
-      if (clickX >= 150 && clickX <= 450 && clickY >= 450 && clickY <= 490) {
-        playSound('click', isMuted);
-        launchGameplay();
-      }
-      // QUIT TO MENU
-      else if (clickX >= 150 && clickX <= 450 && clickY >= 505 && clickY <= 545) {
-        playSound('click', isMuted);
-        setGameState('LOBBY');
-        setMenuIndex(0);
-      }
-    } else if (curState === 'GAMEPLAY') {
-      // Allow clicking inside playing field to pause
+    const curState = gameStateRef.current;
+    if (curState === 'GAMEPLAY') {
       playSound('click', isMuted);
       setGameState('PAUSE');
       setMenuIndex(0);
@@ -552,265 +494,12 @@ const Snake = () => {
       const curState = gameStateRef.current;
 
       // ----------------------------------------------------
-      // STATE: LOBBY
+      // STATE HANDLING
       // ----------------------------------------------------
-      if (curState === 'LOBBY') {
-        // Draw Retro Title
-        ctx.shadowColor = '#00ff88';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#00ff88';
-        ctx.font = 'bold 36px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('SNAKE PROTOCOL', CANVAS_SIZE / 2, 130);
-
-        ctx.shadowColor = '#00d4ff';
-        ctx.fillStyle = '#b4b4c8';
-        ctx.font = '14px "Exo 2", sans-serif';
-        ctx.fillText('RETRO ARCADE TERMINAL V1.0.4', CANVAS_SIZE / 2, 170);
-
-        // Menu items
-        const menuItems = [
-          { text: 'START RUN', type: 'action' },
-          { text: `DIFFICULTY: ${difficulty.toUpperCase()}`, type: 'toggle' },
-          { text: `AUDIO: ${isMuted ? 'OFF' : 'ON'}`, type: 'toggle' },
-          { text: 'LEADERBOARD', type: 'action' }
-        ];
-
-        menuItems.forEach((item, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 300 + idx * 60;
-
-          if (isSelected) {
-            // Draw glowing highlight select box
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 180, y - 28, 360, 40);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 17px "Orbitron", monospace';
-            ctx.fillText(item.text, CANVAS_SIZE / 2, y);
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-            ctx.fillText(item.text, CANVAS_SIZE / 2, y);
-          }
-        });
-
-        // Instructions Footer
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#6b7280';
-        ctx.font = '12px "Exo 2", sans-serif';
-        ctx.fillText('USE ARROWS / WASD TO NAVIGATE • SPACEBAR TO SELECT', CANVAS_SIZE / 2, 535);
-        ctx.fillText(`CURRENT HIGH SCORE: ${highScore} POINTS`, CANVAS_SIZE / 2, 560);
-      }
-
-      // ----------------------------------------------------
-      // STATE: LEADERBOARD
-      // ----------------------------------------------------
-      else if (curState === 'LEADERBOARD') {
-        ctx.shadowColor = '#00d4ff';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#00d4ff';
-        ctx.font = 'bold 28px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('SYSTEM RANKINGS', CANVAS_SIZE / 2, 90);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#8888a0';
-        ctx.font = '12px "Exo 2", sans-serif';
-        ctx.fillText('TOP CYBERNETIC COGNITION RUNNERS', CANVAS_SIZE / 2, 120);
-
-        // Draw Headers
-        ctx.fillStyle = '#b4b4c8';
-        ctx.font = 'bold 13px "Orbitron", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText('RANK', 100, 170);
-        ctx.fillText('RUNNER ID', 170, 170);
-        ctx.textAlign = 'right';
-        ctx.fillText('SCORE', 500, 170);
-
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(100, 185);
-        ctx.lineTo(500, 185);
-        ctx.stroke();
-
-        // Draw Entries
-        if (leaderboardLoading) {
-          ctx.textAlign = 'center';
-          ctx.fillStyle = '#8888a0';
-          ctx.font = '14px "Exo 2", sans-serif';
-          ctx.fillText('QUERYING NET NODES...', CANVAS_SIZE / 2, 280);
-        } else {
-          const list = leaderboard.length > 0 ? leaderboard : [
-            { username: "CYBER_NINJA", score: 450 },
-            { username: "NEON_RIDER", score: 380 },
-            { username: "RETRO_BOY", score: 310 },
-            { username: "GRID_RUNNER", score: 260 },
-            { username: "SNAKE_MASTER", score: 210 }
-          ];
-
-          list.slice(0, 6).forEach((entry, idx) => {
-            const y = 215 + idx * 40;
-            ctx.font = '14px "Orbitron", monospace';
-            ctx.textAlign = 'left';
-            ctx.fillStyle = idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : '#b4b4c8';
-            ctx.fillText(String(idx + 1).padStart(2, '0'), 100, y);
-            ctx.fillText(entry.username || (entry.user && entry.user.username) || "PLAYER", 170, y);
-            ctx.textAlign = 'right';
-            ctx.fillText(String(entry.score), 500, y);
-          });
-        }
-
-        // Back button highlight box
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#00d4ff';
-        ctx.strokeStyle = '#00d4ff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(CANVAS_SIZE / 2 - 120, 480, 240, 40);
-
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 16px "Orbitron", monospace';
-        ctx.fillText('BACK TO LOBBY', CANVAS_SIZE / 2, 505);
-      }
-
-      // ----------------------------------------------------
-      // STATE: PAUSE
-      // ----------------------------------------------------
-      else if (curState === 'PAUSE') {
-        // Draw standard gameplay frame behind the blur
+      if (curState === 'PAUSE' || curState === 'GAMEOVER') {
+        // Draw standard gameplay frame behind the DOM overlays
         drawActiveGameplay(ctx, time);
-
-        // Semi-transparent blackout
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(5, 5, 10, 0.85)';
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-        ctx.shadowColor = '#ff007f';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#ff007f';
-        ctx.font = 'bold 36px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('SYSTEM PAUSED', CANVAS_SIZE / 2, 160);
-
-        const pauseItems = ['RESUME', 'RESTART', 'QUIT TO MENU'];
-        pauseItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 266 + idx * 60;
-
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 120, y - 26, 240, 36);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEOVER
-      // ----------------------------------------------------
-      else if (curState === 'GAMEOVER') {
-        // Draw final screen behind
-        drawActiveGameplay(ctx, time);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(10, 5, 8, 0.9)';
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-        ctx.shadowColor = '#ff007f';
-        ctx.shadowBlur = 20;
-        ctx.fillStyle = '#ff007f';
-        ctx.font = 'bold 38px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('SYSTEM FAILURE', CANVAS_SIZE / 2, 110);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#b4b4c8';
-        ctx.font = '14px "Exo 2", sans-serif';
-        ctx.fillText(`Final grid size reached: ${snakeRef.current.length} segments`, CANVAS_SIZE / 2, 150);
-
-        // Terminal style upload logs
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.fillRect(80, 180, 440, 210);
-        ctx.strokeStyle = 'rgba(255, 0, 127, 0.2)';
-        ctx.strokeRect(80, 180, 440, 210);
-
-        ctx.font = '13px "Courier New", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#00ff88';
-        ctx.fillText(`> Initializing core save routine...`, 100, 210);
-        ctx.fillText(`> Score achieved: ${score} grid nodes`, 100, 230);
-
-        if (submitStatus === 'submitting') {
-          ctx.fillStyle = '#00d4ff';
-          ctx.fillText(`> Contacting secure database nodes...`, 100, 260);
-          ctx.fillText(`> Uploading block results...`, 100, 280);
-        } else if (submitStatus === 'submitted' && rewards) {
-          ctx.fillStyle = '#00ff88';
-          ctx.fillText(`> SCORE UPLOADED SUCCESSFULLY!`, 100, 260);
-          ctx.fillStyle = '#ffd700';
-          ctx.fillText(`> REWARDS DISPATCHED:`, 100, 290);
-          ctx.fillText(`  🪙 +${rewards.coinsEarned} Arcade Coins`, 100, 310);
-          ctx.fillText(`  ⚡ +${rewards.expGained} Experience Nodes`, 100, 330);
-          if (rewards.leveledUp) {
-            ctx.fillStyle = '#ff007f';
-            ctx.fillText(`  [SYSTEM NOTICE] LEVEL UP! Now Level ${rewards.level}`, 100, 355);
-          }
-        } else if (submitStatus === 'failed') {
-          ctx.fillStyle = '#ff0055';
-          ctx.fillText(`> [ERROR] CONNECTION PROTOCOL BROKEN`, 100, 260);
-          ctx.fillText(`> Unable to save highscore online.`, 100, 280);
-        } else if (submitStatus === 'offline') {
-          ctx.fillStyle = '#ffaa00';
-          ctx.fillText(`> [NOTICE] OFFLINE SESSION`, 100, 260);
-          ctx.fillText(`> Authentication token not found.`, 100, 280);
-          ctx.fillText(`> Sign in to earn Coins and EXP next run!`, 100, 300);
-        }
-
-        // Action Options
-        const gameOverItems = ['PLAY AGAIN', 'QUIT TO MENU'];
-        gameOverItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 470 + idx * 55;
-
-          ctx.textAlign = 'center';
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 130, y - 26, 260, 36);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEPLAY
-      // ----------------------------------------------------
-      else if (curState === 'GAMEPLAY') {
+      } else if (curState === 'GAMEPLAY') {
         // Ticking logic
         const speed = getSpeed();
         if (time - lastTickRef.current > speed) {
@@ -990,26 +679,21 @@ const Snake = () => {
   return (
     <div className="snake-container">
       {/* Centered Logo-Aligned Floating Circular Back Button */}
-      {gameState === 'LOBBY' || gameState === 'LEADERBOARD' || gameState === 'GAMEOVER' || gameState === 'PAUSE' ? (
+            {gameState === 'LOBBY' || gameState === 'GAMEOVER' || gameState === 'PAUSE' ? (
         <Link to="/UODGaming" className="floating-back-btn" title="Back to Games">
           <ArrowLeft size={20} />
         </Link>
-      ) : null}
-
-      {gameState === 'GAMEPLAY' ? (
-        <button
-          onClick={() => {
-            playSound('click', isMuted);
-            setGameState('PAUSE');
-            setMenuIndex(0);
-          }}
-          className="floating-back-btn"
+      ) : gameState === 'GAMEPLAY' ? (
+        <button 
+          onClick={() => { playSound('click', mutedRef.current); setGameState('PAUSE'); setMenuIndex && typeof setMenuIndex === 'function' ? setMenuIndex(0) : null; }} 
+          className="floating-back-btn" 
+          style={{ cursor: 'pointer' }}
           title="Pause Game"
-          style={{ cursor: 'pointer', outline: 'none' }}
         >
-          <Pause size={20} />
+          <Pause size={20} color="white" />
         </button>
       ) : null}
+
 
       <div className="game-content-card">
         <div className="cabinet-screen crt-screen" onClick={handleCanvasClick}>
@@ -1017,6 +701,138 @@ const Snake = () => {
           <div className="crt-scanlines"></div>
           <div className="crt-reflection"></div>
           <div className="crt-flicker"></div>
+
+          {/* DOM OVERLAYS */}
+          {gameState === 'LOBBY' && (
+            <div className="snake-overlay">
+              <h1 className="snake-title">SNAKE PROTOCOL</h1>
+              <p className="snake-subtitle">RETRO ARCADE TERMINAL V1.0.4</p>
+              
+              <div className="snake-menu">
+                <button 
+                  className={`snake-btn ${menuIndex === 0 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(0)}
+                  onClick={() => { playSound('click', isMuted); launchGameplay(); }}
+                >
+                  START RUN
+                </button>
+                <button 
+                  className={`snake-btn ${menuIndex === 1 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(1)}
+                  onClick={() => { playSound('click', isMuted); setDifficulty(prev => prev === 'easy' ? 'medium' : prev === 'medium' ? 'hard' : 'easy'); }}
+                >
+                  DIFFICULTY: {difficulty}
+                </button>
+                <button 
+                  className={`snake-btn ${menuIndex === 2 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(2)}
+                  onClick={() => { playSound('click', isMuted); setIsMuted(prev => !prev); }}
+                >
+                  AUDIO: {isMuted ? 'OFF' : 'ON'}
+                </button>
+                <button 
+                  className={`snake-btn ${menuIndex === 3 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(3)}
+                  onClick={() => { playSound('click', isMuted); setGameState('LEADERBOARD'); }}
+                >
+                  LEADERBOARD
+                </button>
+                <button 
+                  className={`snake-btn ${menuIndex === 4 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(4)}
+                  onClick={() => { playSound('click', isMuted); window.location.href = '/UODGaming'; }}
+                >
+                  EXIT TO MENU
+                </button>
+              </div>
+            </div>
+          )}
+
+          {gameState === 'LEADERBOARD' && (
+            <div className="snake-overlay">
+              <h1 className="snake-title" style={{ fontSize: '28px' }}>SYSTEM RANKINGS</h1>
+              <p className="snake-subtitle">TOP CYBERNETIC COGNITION RUNNERS</p>
+
+              <div className="snake-leaderboard-container">
+                {leaderboardLoading ? (
+                  <div className="snake-leaderboard-item" style={{ justifyContent: 'center', color: '#8888a0' }}>QUERYING NET NODES...</div>
+                ) : (
+                  (leaderboard.length > 0 ? leaderboard : [
+                    { username: "CYBER_NINJA", score: 450 },
+                    { username: "NEON_RIDER", score: 380 },
+                    { username: "RETRO_BOY", score: 310 },
+                    { username: "GRID_RUNNER", score: 260 },
+                    { username: "SNAKE_MASTER", score: 210 }
+                  ]).slice(0, 15).map((entry, idx) => (
+                    <div className="snake-leaderboard-item" key={idx}>
+                      <span style={{ color: idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : '#b4b4c8', width: '30px' }}>{String(idx + 1).padStart(2, '0')}</span>
+                      <span style={{ flex: 1, textAlign: 'left', color: '#fff' }}>{entry.username || (entry.user && entry.user.username) || "PLAYER"}</span>
+                      <span style={{ color: '#00ff88' }}>{entry.score}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="snake-menu">
+                <button 
+                  className={`snake-btn selected`}
+                  onClick={() => { playSound('click', isMuted); setGameState('LOBBY'); setMenuIndex(3); }}
+                >
+                  BACK TO LOBBY
+                </button>
+              </div>
+            </div>
+          )}
+
+          {gameState === 'PAUSE' && (
+            <div className="snake-overlay" style={{ background: 'rgba(5, 5, 10, 0.96)' }}>
+              <h1 className="snake-title" style={{ color: '#ff007f', textShadow: '0 0 15px rgba(255, 0, 127, 0.8)' }}>SYSTEM PAUSED</h1>
+              <p className="snake-subtitle" style={{ marginBottom: '60px' }}></p>
+              
+              <div className="snake-menu">
+                {['RESUME', 'RESTART', 'QUIT TO MENU'].map((text, idx) => (
+                  <button 
+                    key={idx}
+                    className={`snake-btn ${menuIndex === idx ? 'selected' : ''}`}
+                    onMouseEnter={() => setMenuIndex(idx)}
+                    onClick={() => {
+                      playSound('click', isMuted);
+                      if (idx === 0) setGameState('GAMEPLAY');
+                      else if (idx === 1) launchGameplay();
+                      else setGameState('LOBBY');
+                    }}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {gameState === 'GAMEOVER' && (
+            <div className="snake-overlay" style={{ background: 'rgba(10, 5, 8, 0.96)' }}>
+              <h1 className="snake-title" style={{ color: '#ff007f', textShadow: '0 0 20px rgba(255, 0, 127, 0.8)', fontSize: '42px' }}>GAME OVER</h1>
+              <p className="snake-subtitle" style={{ color: '#00d4ff', fontSize: '20px', marginBottom: '5px' }}>CURRENT SCORE: {score}</p>
+              <p className="snake-subtitle" style={{ color: '#00ff88', fontSize: '16px', marginBottom: '40px' }}>BEST SCORE: {highScore}</p>
+              
+              <div className="snake-menu">
+                {['PLAY AGAIN', 'QUIT TO MENU'].map((text, idx) => (
+                  <button 
+                    key={idx}
+                    className={`snake-btn ${menuIndex === idx ? 'selected' : ''}`}
+                    onMouseEnter={() => setMenuIndex(idx)}
+                    onClick={() => {
+                      playSound('click', isMuted);
+                      if (idx === 0) launchGameplay();
+                      else setGameState('LOBBY');
+                    }}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Simple HUD on Canvas or as relative header block */}
           {gameState === 'GAMEPLAY' && (
@@ -1042,7 +858,7 @@ const Snake = () => {
             ref={canvasRef} 
             width={CANVAS_SIZE} 
             height={CANVAS_SIZE}
-            style={{ display: 'block', background: '#020205', width: '100%', height: 'auto', maxWidth: '600px' }}
+            style={{ display: 'block', background: '#020205', width: '100%', height: 'auto', maxWidth: '650px' }}
           />
         </div>
       </div>

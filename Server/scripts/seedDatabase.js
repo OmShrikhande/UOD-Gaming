@@ -126,8 +126,8 @@ const seedData = async () => {
             },
             {
                 title: "Neon Brick Breaker",
-                description: "Classic physics breakout brick bouncer. Control the safety paddle to break lines of glowing neon glass bricks!",
-                shortDescription: "Classic breakout arcade bouncer.",
+                description: "Completely redesigned physics breakout bouncer! Control the neon paddle to destroy glass bricks with particles and screen shake!",
+                shortDescription: "Redesigned breakout arcade bouncer.",
                 category: "action",
                 tags: ["Arcade", "Physics", "Singleplayer"],
                 screenshots: [{ url: "/brick_icon.png", caption: "Brick Breaker Icon", isPrimary: true }],
@@ -137,6 +137,7 @@ const seedData = async () => {
                 isActive: true,
                 publishedAt: new Date()
             },
+
             {
                 title: "Cyber Falcon",
                 description: "Thrust-based gravity avoider. Guide the ship through gaps between scrolling laser pillar obstacles!",
@@ -170,6 +171,19 @@ const seedData = async () => {
                 category: "casual",
                 tags: ["Logic", "Reflex", "Casual"],
                 screenshots: [{ url: "/schulte_icon.png", caption: "Grid Speed Icon", isPrimary: true }],
+                gameplay: { minPlayers: 1, maxPlayers: 1, difficulty: "medium" },
+                developer: adminUser._id,
+                status: "approved",
+                isActive: true,
+                publishedAt: new Date()
+            },
+            {
+                title: "Space Obstacle",
+                description: "Top-down endless space runner! Pilot a neon ship, dodge procedurally generated asteroids, and survive the scrolling starfield!",
+                shortDescription: "Top-down endless space runner.",
+                category: "action",
+                tags: ["Endless", "Survival", "Action"],
+                screenshots: [{ url: "/falcon_icon.png", caption: "Space Obstacle Icon", isPrimary: true }],
                 gameplay: { minPlayers: 1, maxPlayers: 1, difficulty: "medium" },
                 developer: adminUser._id,
                 status: "approved",

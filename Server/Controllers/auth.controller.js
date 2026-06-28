@@ -20,6 +20,7 @@ export const registerUser = async (req, res) => {
     }
 
     const { username, email, password, displayName } = req.body;
+    delete req.body.role; // Fix for Role Injection Bypass
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -60,6 +61,14 @@ export const registerUser = async (req, res) => {
     // Generate JWT token
     const token = createToken(user._id, user.email);
 
+    // Set HttpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 5 * 24 * 60 * 60 * 1000 // 5 days
+    });
+
     // Remove sensitive information
     const userResponse = user.toObject();
     delete userResponse.password;
@@ -68,8 +77,7 @@ export const registerUser = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Account created successfully! Welcome to UOD Gaming!",
-      user: userResponse,
-      token
+      user: userResponse
     });
 
   } catch (error) {
@@ -161,6 +169,14 @@ export const loginUser = async (req, res) => {
     // Generate JWT token
     const token = createToken(user._id, user.email);
 
+    // Set HttpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 5 * 24 * 60 * 60 * 1000 // 5 days
+    });
+
     // Prepare user response
     const userResponse = user.toObject();
     delete userResponse.password;
@@ -170,8 +186,7 @@ export const loginUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: `Welcome back, ${user.profile.displayName || user.username}!`,
-      user: userResponse,
-      token
+      user: userResponse
     });
 
   } catch (error) {
@@ -181,6 +196,33 @@ export const loginUser = async (req, res) => {
       message: "Login failed. Please try again."
     });
   }
+};
+
+// Logout user
+export const logoutUser = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully"
+  });
+};
+
+// Get CSRF Token
+export const getCsrfToken = (req, res) => {
+  const token = crypto.randomBytes(32).toString('hex');
+  res.cookie('csrfToken', token, {
+    httpOnly: false, // Must be readable by frontend logic
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
+  res.status(200).json({
+    success: true,
+    csrfToken: token
+  });
 };
 
 // Check if user is logged in
@@ -284,18 +326,22 @@ export const getUserProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user._id;
-    const updates = req.body;
+    const rawUpdates = req.body;
+    const updates = {};
     
-    // Remove sensitive fields from updates
-    delete updates.password;
-    delete updates.role;
-    delete updates.security;
-    delete updates.supporterInfo;
+    // Strict whitelist of allowed fields to prevent Mass Assignment
+    if (rawUpdates.username) updates.username = rawUpdates.username;
+    if (rawUpdates.profile) {
+      if (rawUpdates.profile.displayName !== undefined) updates['profile.displayName'] = rawUpdates.profile.displayName;
+      if (rawUpdates.profile.bio !== undefined) updates['profile.bio'] = rawUpdates.profile.bio;
+      if (rawUpdates.profile.avatar !== undefined) updates['profile.avatar'] = rawUpdates.profile.avatar;
+      if (rawUpdates.profile.socialLinks !== undefined) updates['profile.socialLinks'] = rawUpdates.profile.socialLinks;
+    }
 
     const user = await User.findByIdAndUpdate(
       userId,
       { 
-        ...updates,
+        $set: updates,
         updatedAt: new Date()
       },
       { new: true, runValidators: true }

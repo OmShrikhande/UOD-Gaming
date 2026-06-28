@@ -155,7 +155,7 @@ const SchulteGrid = () => {
 
   // Submit high score
   const submitGridScore = async (finalScore, selectedGridSize) => {
-    const token = localStorage.getItem('token');
+    const token = 'cookie-token';
     if (gameId && token && finalScore > 0) {
       setSubmitStatus('submitting');
       try {
@@ -291,10 +291,10 @@ const SchulteGrid = () => {
     if (curState === 'LOBBY') {
       if (code === 'ArrowUp' || code === 'KeyW') {
         playSound('click', mutedRef.current);
-        setMenuIndex(prev => (prev === 0 ? 1 : prev - 1));
+        setMenuIndex(prev => { const next = prev === 0 ? 2 : prev - 1; menuIndexRef.current = next; return next; });
       } else if (code === 'ArrowDown' || code === 'KeyS') {
         playSound('click', mutedRef.current);
-        setMenuIndex(prev => (prev === 1 ? 0 : prev + 1));
+        setMenuIndex(prev => { const next = prev === 2 ? 0 : prev + 1; menuIndexRef.current = next; return next; });
       } else if (code === 'ArrowLeft' || code === 'KeyA') {
         if (menuIndexRef.current === 0) {
           playSound('change', mutedRef.current);
@@ -307,7 +307,8 @@ const SchulteGrid = () => {
         }
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click', mutedRef.current);
-        startGame();
+        if (menuIndexRef.current === 2) window.location.href = '/UODGaming';
+        else startGame();
       }
     } else if (curState === 'GAMEPLAY') {
       const size = gridSizeRef.current;
@@ -403,48 +404,7 @@ const SchulteGrid = () => {
     }
 
     const curState = gameState;
-    if (curState === 'LOBBY') {
-      // START RUN button click coordinates
-      if (clickX >= 180 && clickX <= 420 && clickY >= 320 && clickY <= 360) {
-        playSound('click', muted);
-        startGame();
-      }
-      // Grid Size tabs clicks
-      else if (clickY >= 230 && clickY <= 270) {
-        if (clickX >= 170 && clickX <= 260) {
-          playSound('change', muted);
-          setGridSize(3);
-        } else if (clickX >= 270 && clickX <= 330) {
-          playSound('change', muted);
-          setGridSize(5);
-        } else if (clickX >= 340 && clickX <= 430) {
-          playSound('change', muted);
-          setGridSize(7);
-        }
-      }
-    } else if (curState === 'PAUSE') {
-      if (clickX >= 200 && clickX <= 400 && clickY >= 240 && clickY <= 280) {
-        playSound('click', muted);
-        startTimeRef.current += (performance.now() - pauseStartTimeRef.current);
-        setGameState('GAMEPLAY');
-      } else if (clickX >= 200 && clickX <= 400 && clickY >= 300 && clickY <= 340) {
-        playSound('click', muted);
-        startGame();
-      } else if (clickX >= 200 && clickX <= 400 && clickY >= 360 && clickY <= 400) {
-        playSound('click', muted);
-        setGameState('LOBBY');
-        setMenuIndex(0);
-      }
-    } else if (curState === 'GAMEOVER') {
-      if (clickX >= 150 && clickX <= 450 && clickY >= 455 && clickY <= 495) {
-        playSound('click', muted);
-        startGame();
-      } else if (clickX >= 150 && clickX <= 450 && clickY >= 510 && clickY <= 550) {
-        playSound('click', muted);
-        setGameState('LOBBY');
-        setMenuIndex(0);
-      }
-    } else if (curState === 'GAMEPLAY') {
+    if (curState === 'GAMEPLAY') {
       if (
         clickX >= GRID_X_START &&
         clickX <= GRID_X_START + GRID_SIZE_PX &&
@@ -536,83 +496,9 @@ const SchulteGrid = () => {
       const curState = gameStateRef.current;
 
       // ----------------------------------------------------
-      // STATE: LOBBY
+      // STATE HANDLING
       // ----------------------------------------------------
-      if (curState === 'LOBBY') {
-        ctx.shadowColor = '#00d4ff';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#00d4ff';
-        ctx.font = 'bold 36px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('CYBER GRID FINDER', CANVAS_SIZE / 2, 130);
-
-        ctx.shadowColor = '#00ff88';
-        ctx.fillStyle = '#8888a0';
-        ctx.font = '14px "Exo 2", sans-serif';
-        ctx.fillText('SEQUENTIAL REFLEX DIAGNOSTIC', CANVAS_SIZE / 2, 170);
-
-        // Row 0: Grid size selector tabs
-        const sizes = [3, 5, 7];
-        const isSizeRowSelected = menuIndex === 0;
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = isSizeRowSelected ? '#ffffff' : '#6b7280';
-        ctx.font = '14px "Orbitron", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText('GRID SIZE:', 100, 252);
-
-        sizes.forEach((sz, idx) => {
-          const isCurrentGridSize = gridSize === sz;
-          const x = 220 + idx * 80;
-
-          if (isCurrentGridSize) {
-            ctx.shadowColor = '#00d4ff';
-            ctx.shadowBlur = 8;
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(x - 12, 232, 60, 28);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 15px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '14px "Orbitron", monospace';
-          }
-          ctx.textAlign = 'center';
-          ctx.fillText(`${sz}x${sz}`, x + 18, 252);
-        });
-
-        // Row 1: START RUN button
-        const isStartSelected = menuIndex === 1;
-        ctx.textAlign = 'center';
-        if (isStartSelected) {
-          ctx.shadowColor = '#00d4ff';
-          ctx.shadowBlur = 10;
-          ctx.strokeStyle = '#00d4ff';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(CANVAS_SIZE / 2 - 120, 340 - 26, 240, 36);
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 17px "Orbitron", monospace';
-        } else {
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = '#8888a0';
-          ctx.font = '15px "Orbitron", monospace';
-        }
-        ctx.fillText('START RUN', CANVAS_SIZE / 2, 340);
-
-        // Instructions
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#555568';
-        ctx.font = '12px "Exo 2", sans-serif';
-        ctx.fillText('USE ARROWS / WASD TO NAVIGATE • SPACEBAR TO CONFIRM', CANVAS_SIZE / 2, 510);
-        ctx.fillText(`CURRENT HIGH SCORE: ${highScores[gridSize].toLocaleString()} POINTS`, CANVAS_SIZE / 2, 540);
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEPLAY / PAUSE
-      // ----------------------------------------------------
-      else if (curState === 'GAMEPLAY' || curState === 'PAUSE') {
+      if (curState === 'PAUSE' || curState === 'GAMEOVER' || curState === 'GAMEPLAY') {
         // Draw HUD details
         ctx.textAlign = 'left';
         ctx.fillStyle = '#8888a0';
@@ -697,7 +583,7 @@ const SchulteGrid = () => {
             ctx.fillText(String(cell.value), x + cellW / 2, y + cellH / 2);
 
             // Draw selection box outline if cursor matches
-            if (cursor.row === r && cursor.col === c) {
+            if (cursor.row === r && cursor.col === c && gameStateRef.current === 'GAMEPLAY') {
               ctx.shadowColor = '#ffffff';
               ctx.shadowBlur = 8;
               ctx.strokeStyle = '#ffffff';
@@ -710,122 +596,6 @@ const SchulteGrid = () => {
           }
         }
         ctx.textBaseline = 'alphabetic'; // reset
-
-        if (curState === 'PAUSE') {
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = 'rgba(5, 5, 10, 0.85)';
-          ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-          ctx.shadowColor = '#00d4ff';
-          ctx.shadowBlur = 15;
-          ctx.fillStyle = '#00d4ff';
-          ctx.font = 'bold 36px "Orbitron", monospace';
-          ctx.textAlign = 'center';
-          ctx.fillText('SYSTEM PAUSED', CANVAS_SIZE / 2, 160);
-
-          const pauseItems = ['RESUME', 'RESTART', 'BACK TO MENU'];
-          pauseItems.forEach((text, idx) => {
-            const isSelected = menuIndex === idx;
-            const y = 266 + idx * 60;
-
-            if (isSelected) {
-              ctx.shadowBlur = 10;
-              ctx.shadowColor = '#00d4ff';
-              ctx.strokeStyle = '#00d4ff';
-              ctx.lineWidth = 2;
-              ctx.strokeRect(CANVAS_SIZE / 2 - 110, y - 26, 220, 36);
-
-              ctx.fillStyle = '#ffffff';
-              ctx.font = 'bold 16px "Orbitron", monospace';
-            } else {
-              ctx.shadowBlur = 0;
-              ctx.fillStyle = '#8888a0';
-              ctx.font = '15px "Orbitron", monospace';
-            }
-            ctx.fillText(text, CANVAS_SIZE / 2, y);
-          });
-        }
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEOVER
-      // ----------------------------------------------------
-      else if (curState === 'GAMEOVER') {
-        // Redraw grid behind game over in dark tint
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(4, 4, 8, 0.9)';
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-        ctx.shadowColor = '#00ff88';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#00ff88';
-        ctx.font = 'bold 34px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('DIAGNOSTIC COMPLETE', CANVAS_SIZE / 2, 100);
-
-        // CLI Sync logger box
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.fillRect(70, 140, 460, 270);
-        ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
-        ctx.strokeRect(70, 140, 460, 270);
-
-        ctx.font = '13px "Courier New", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#00d4ff';
-        ctx.fillText(`> Sequence calibration parameters synced.`, 90, 170);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(`> Grid size profile: ${gridSize}x${gridSize} matrix`, 90, 195);
-        ctx.fillText(`> Calibration duration: ${elapsedTimeRef.current.toFixed(2)}s`, 90, 215);
-        ctx.fillText(`> Telemetry Final Score: ${scoreRef.current} pts`, 90, 235);
-
-        if (submitStatus === 'submitting') {
-          ctx.fillStyle = '#00d4ff';
-          ctx.fillText(`> Connecting to registry cloud database...`, 90, 270);
-          ctx.fillText(`> Authorizing signature blocks...`, 90, 290);
-        } else if (submitStatus === 'submitted' && rewards) {
-          ctx.fillStyle = '#00ff88';
-          ctx.fillText(`> DATA SYNC SUCCESS. ACCOUNT STORAGE UPDATED.`, 90, 270);
-          ctx.fillStyle = '#ffd700';
-          ctx.fillText(`> COMPILER REWARDS ISSUED:`, 90, 300);
-          ctx.fillText(`  🪙 +${rewards.coinsEarned} Arcade Coins`, 90, 320);
-          ctx.fillText(`  ⚡ +${rewards.expGained} Experience Nodes`, 90, 340);
-          if (rewards.leveledUp) {
-            ctx.fillStyle = '#a855f7';
-            ctx.fillText(`  [NOTICE] level capacity increased to ${rewards.level}`, 90, 365);
-          }
-        } else if (submitStatus === 'failed') {
-          ctx.fillStyle = '#ff0055';
-          ctx.fillText(`> [CRITICAL_ERROR] DATABASE NODE SYNC FAILURE.`, 90, 270);
-        } else if (submitStatus === 'offline') {
-          ctx.fillStyle = '#ffaa00';
-          ctx.fillText(`> [NOTICE] OFFLINE OPERATION DETECTED`, 90, 270);
-          ctx.fillText(`> Log in to authorize registry credentials.`, 90, 295);
-        }
-
-        // Action Options
-        const gameOverItems = ['PLAY AGAIN', 'QUIT TO MENU'];
-        gameOverItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 475 + idx * 55;
-
-          ctx.textAlign = 'center';
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 130, y - 26, 260, 36);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
       }
 
       // Draw Global Speaker Icon
@@ -883,33 +653,26 @@ const SchulteGrid = () => {
   return (
     <div className="schulte-page-wrapper">
       {/* Floating circular back button (Only visible in Lobby, GameOver or Pause) */}
-      {gameState === 'LOBBY' || gameState === 'GAMEOVER' || gameState === 'PAUSE' ? (
+            {gameState === 'LOBBY' || gameState === 'GAMEOVER' || gameState === 'PAUSE' ? (
         <Link to="/UODGaming" className="floating-back-btn" title="Back to Games">
           <ArrowLeft size={20} />
         </Link>
-      ) : null}
-
-      {gameState === 'GAMEPLAY' ? (
-        <button
-          onClick={() => {
-            playSound('click', muted);
-            pauseStartTimeRef.current = performance.now();
-            setGameState('PAUSE');
-            setMenuIndex(0);
-          }}
-          className="floating-back-btn"
+      ) : gameState === 'GAMEPLAY' ? (
+        <button 
+          onClick={() => { playSound('click', mutedRef.current); setGameState('PAUSE'); setMenuIndex && typeof setMenuIndex === 'function' ? setMenuIndex(0) : null; }} 
+          className="floating-back-btn" 
+          style={{ cursor: 'pointer' }}
           title="Pause Game"
-          style={{ cursor: 'pointer', outline: 'none' }}
         >
-          <Pause size={20} />
+          <Pause size={20} color="white" />
         </button>
       ) : null}
+
+
 
       <div className="game-content-card">
         <div 
           className="cabinet-screen crt-screen"
-          onClick={handleCanvasClick}
-          onMouseMove={handleCanvasMouseMove}
         >
           {/* CRT scanlines, reflection and flicker overlay */}
           <div className="crt-scanlines"></div>
@@ -920,8 +683,99 @@ const SchulteGrid = () => {
             ref={canvasRef}
             width={CANVAS_SIZE}
             height={CANVAS_SIZE}
-            style={{ display: 'block', background: '#030206', width: '100%', height: 'auto', maxWidth: '600px' }}
+            style={{ display: 'block', background: '#020205', width: '100%', height: 'auto', maxWidth: '650px' }}
+            onClick={handleCanvasClick}
+            onMouseMove={handleCanvasMouseMove}
           />
+          
+          {/* DOM OVERLAYS */}
+          {gameState === 'LOBBY' && (
+            <div className="schultegrid-overlay">
+              <h1 className="schultegrid-title">SCHULTE GRID</h1>
+              <p className="schultegrid-subtitle">PERIPHERAL VISION CALIBRATION</p>
+              <p className="schultegrid-subtitle" style={{ marginTop: '-30px', color: '#00d4ff' }}>CURRENT HIGH SCORE: {highScores[gridSize].toLocaleString()} POINTS</p>
+              
+              <div style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
+                {[3, 5, 7].map(sz => (
+                  <button 
+                    key={sz}
+                    className={`schultegrid-btn ${gridSize === sz ? 'selected' : ''}`}
+                    style={{ minWidth: '60px' }}
+                    onClick={() => { playSound('change', mutedRef.current); setGridSize(sz); }}
+                  >
+                    {sz}x{sz}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="schultegrid-menu">
+                <button 
+                  className={`schultegrid-btn ${menuIndex === 1 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(1)}
+                  onClick={() => { playSound('click', mutedRef.current); startGame(); }}
+                >
+                  START RUN
+                </button>
+                <button 
+                  className={`schultegrid-btn ${menuIndex === 2 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(2)}
+                  onClick={() => { playSound('click', mutedRef.current); window.location.href = '/UODGaming'; }}
+                >
+                  EXIT TO MENU
+                </button>
+              </div>
+            </div>
+          )}
+
+          {gameState === 'PAUSE' && (
+            <div className="schultegrid-overlay" style={{ background: 'rgba(5, 5, 10, 0.96)' }}>
+              <h1 className="schultegrid-title" style={{ color: '#00d4ff', textShadow: '0 0 15px rgba(0, 212, 255, 0.8)' }}>SYSTEM PAUSED</h1>
+              <p className="schultegrid-subtitle" style={{ marginBottom: '60px' }}></p>
+              
+              <div className="schultegrid-menu">
+                {['RESUME', 'RESTART', 'BACK TO MENU'].map((text, idx) => (
+                  <button 
+                    key={idx}
+                    className={`schultegrid-btn ${menuIndex === idx ? 'selected' : ''}`}
+                    onMouseEnter={() => setMenuIndex(idx)}
+                    onClick={() => {
+                      playSound('click', mutedRef.current);
+                      if (idx === 0) { startTimeRef.current += (performance.now() - pauseStartTimeRef.current); setGameState('GAMEPLAY'); }
+                      else if (idx === 1) startGame();
+                      else { setGameState('LOBBY'); setMenuIndex(0); }
+                    }}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {gameState === 'GAMEOVER' && (
+            <div className="schultegrid-overlay" style={{ background: 'rgba(5, 5, 10, 0.96)' }}>
+              <h1 className="schultegrid-title" style={{ color: '#00ff88', textShadow: '0 0 20px rgba(0, 255, 136, 0.8)' }}>YOU WIN</h1>
+              <p className="schultegrid-subtitle" style={{ color: '#00d4ff', fontSize: '20px', marginBottom: '5px' }}>CURRENT SCORE: {score}</p>
+              <p className="schultegrid-subtitle" style={{ color: '#00ff88', fontSize: '16px', marginBottom: '40px' }}>BEST SCORE: {highScores[gridSize]}</p>
+              
+              <div className="schultegrid-menu">
+                <button 
+                  className={`schultegrid-btn ${menuIndex === 0 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(0)}
+                  onClick={() => { playSound('click', mutedRef.current); startGame(); }}
+                >
+                  PLAY AGAIN
+                </button>
+                <button 
+                  className={`schultegrid-btn ${menuIndex === 1 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(1)}
+                  onClick={() => { playSound('click', mutedRef.current); setGameState('LOBBY'); setMenuIndex(0); }}
+                >
+                  QUIT TO MENU
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

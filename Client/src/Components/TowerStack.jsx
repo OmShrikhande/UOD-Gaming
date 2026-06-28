@@ -108,6 +108,8 @@ const TowerStack = () => {
 
   // Menu navigation index
   const [menuIndex, setMenuIndex] = useState(0);
+  const menuIndexRef = useRef(0);
+  useEffect(() => { menuIndexRef.current = menuIndex; }, [menuIndex]);
 
   // API sync states
   const [gameId, setGameId] = useState(null);
@@ -147,7 +149,7 @@ const TowerStack = () => {
 
   // Submit high score
   const submitStackScore = async (finalScore) => {
-    const token = localStorage.getItem('token');
+    const token = 'cookie-token';
     if (gameId && token && finalScore > 0) {
       setSubmitStatus('submitting');
       try {
@@ -365,26 +367,35 @@ const TowerStack = () => {
   const handleKeyboardNav = (code) => {
     const curState = gameStateRef.current;
     if (curState === 'LOBBY') {
-      if (code === 'Space' || code === 'Enter') {
+      if (code === 'ArrowUp' || code === 'KeyW' || code === 'ArrowDown' || code === 'KeyS') {
         playSound('click', mutedRef.current);
-        startGame();
+        setMenuIndex(prev => (prev === 0 ? 1 : 0));
+      } else if (code === 'Space' || code === 'Enter') {
+        playSound('click', mutedRef.current);
+        if (menuIndexRef.current === 0) startGame();
+        else window.location.href = '/UODGaming';
       }
     } else if (curState === 'PAUSE') {
       if (code === 'ArrowUp' || code === 'KeyW') {
         playSound('click', mutedRef.current);
         setMenuIndex(prev => (prev === 0 ? 2 : prev - 1));
+        menuIndexRef.current = (menuIndexRef.current === 0 ? 2 : menuIndexRef.current - 1);
+        setMenuIndex(menuIndexRef.current);
       } else if (code === 'ArrowDown' || code === 'KeyS') {
         playSound('click', mutedRef.current);
-        setMenuIndex(prev => (prev === 2 ? 0 : prev + 1));
+        menuIndexRef.current = (menuIndexRef.current === 2 ? 0 : menuIndexRef.current + 1);
+        setMenuIndex(menuIndexRef.current);
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click', mutedRef.current);
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           lastFrameTimeRef.current = performance.now();
           setGameState('GAMEPLAY');
-        } else if (menuIndex === 1) {
+        } else if (menuIndexRef.current === 1) {
           startGame();
         } else {
           setGameState('LOBBY');
+          menuIndexRef.current = 0;
+          setMenuIndex(0);
         }
       } else if (code === 'Escape') {
         playSound('click', mutedRef.current);
@@ -397,7 +408,7 @@ const TowerStack = () => {
         setMenuIndex(prev => (prev === 0 ? 1 : 0));
       } else if (code === 'Space' || code === 'Enter') {
         playSound('click', mutedRef.current);
-        if (menuIndex === 0) {
+        if (menuIndexRef.current === 0) {
           startGame();
         } else {
           setGameState('LOBBY');
@@ -448,32 +459,7 @@ const TowerStack = () => {
     }
 
     const curState = gameState;
-    if (curState === 'LOBBY') {
-      if (clickX >= 150 && clickX <= 450 && clickY >= 300 && clickY <= 360) {
-        playSound('click', muted);
-        startGame();
-      }
-    } else if (curState === 'PAUSE') {
-      if (clickX >= 200 && clickX <= 400 && clickY >= 240 && clickY <= 280) {
-        playSound('click', muted);
-        lastFrameTimeRef.current = performance.now();
-        setGameState('GAMEPLAY');
-      } else if (clickX >= 200 && clickX <= 400 && clickY >= 300 && clickY <= 340) {
-        playSound('click', muted);
-        startGame();
-      } else if (clickX >= 200 && clickX <= 400 && clickY >= 360 && clickY <= 400) {
-        playSound('click', muted);
-        setGameState('LOBBY');
-      }
-    } else if (curState === 'GAMEOVER') {
-      if (clickX >= 150 && clickX <= 450 && clickY >= 440 && clickY <= 480) {
-        playSound('click', muted);
-        startGame();
-      } else if (clickX >= 150 && clickX <= 450 && clickY >= 495 && clickY <= 535) {
-        playSound('click', muted);
-        setGameState('LOBBY');
-      }
-    } else if (curState === 'GAMEPLAY') {
+    if (curState === 'GAMEPLAY') {
       dropBlock();
     }
   };
@@ -548,161 +534,9 @@ const TowerStack = () => {
       const curState = gameStateRef.current;
 
       // ----------------------------------------------------
-      // STATE: LOBBY
+      // STATE HANDLING
       // ----------------------------------------------------
-      if (curState === 'LOBBY') {
-        ctx.shadowColor = '#a855f7';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#a855f7';
-        ctx.font = 'bold 36px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('NEON STACK TOWER', CANVAS_SIZE / 2, 130);
-
-        ctx.shadowColor = '#00ff88';
-        ctx.fillStyle = '#b4b4c8';
-        ctx.font = '14px "Exo 2", sans-serif';
-        ctx.fillText('COMBO EXPANSION ALIGNER', CANVAS_SIZE / 2, 170);
-
-        // Draw START RUN button centered
-        ctx.shadowColor = '#a855f7';
-        ctx.shadowBlur = 10;
-        ctx.strokeStyle = '#a855f7';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(CANVAS_SIZE / 2 - 130, 330 - 28, 260, 40);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 18px "Orbitron", monospace';
-        ctx.fillText('START RUN', CANVAS_SIZE / 2, 330);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#6b7280';
-        ctx.font = '12px "Exo 2", sans-serif';
-        ctx.fillText('USE ARROWS / WASD TO NAVIGATE • SPACEBAR TO SELECT', CANVAS_SIZE / 2, 550);
-      }
-
-      // ----------------------------------------------------
-      // STATE: PAUSE
-      // ----------------------------------------------------
-      else if (curState === 'PAUSE') {
-        drawActiveGameElements(ctx);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(5, 5, 10, 0.85)';
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-        ctx.shadowColor = '#a855f7';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#a855f7';
-        ctx.font = 'bold 36px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('SYSTEM PAUSED', CANVAS_SIZE / 2, 160);
-
-        const pauseItems = ['RESUME', 'RESTART', 'BACK TO MENU'];
-        pauseItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 266 + idx * 60;
-
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 100, y - 26, 200, 36);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEOVER
-      // ----------------------------------------------------
-      else if (curState === 'GAMEOVER') {
-        drawActiveGameElements(ctx);
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(5, 5, 10, 0.88)';
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-        ctx.shadowColor = '#ff0055';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#ff0055';
-        ctx.font = 'bold 34px "Orbitron", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('TOWER COLLAPSED', CANVAS_SIZE / 2, 110);
-
-        // CLI Sync logger
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.fillRect(80, 160, 440, 230);
-        ctx.strokeStyle = 'rgba(168, 85, 247, 0.2)';
-        ctx.strokeRect(80, 160, 440, 230);
-
-        ctx.font = '13px "Courier New", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#a855f7';
-        ctx.fillText(`> Stacking alignment limits exceeded.`, 100, 190);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(`> Telemetry Final Score: ${scoreRef.current} stacked`, 100, 210);
-
-        if (submitStatus === 'submitting') {
-          ctx.fillStyle = '#00d4ff';
-          ctx.fillText(`> Connecting to deflector registry database...`, 100, 240);
-          ctx.fillText(`> Uploading tower logs...`, 100, 260);
-        } else if (submitStatus === 'submitted' && rewards) {
-          ctx.fillStyle = '#00ff88';
-          ctx.fillText(`> DATA SYNC SUCCESS. CORE INTEGRATION COMPLETE.`, 100, 240);
-          ctx.fillStyle = '#ffd700';
-          ctx.fillText(`> REWARDS CREDITED:`, 100, 270);
-          ctx.fillText(`  🪙 +${rewards.coinsEarned} Arcade Coins`, 100, 290);
-          ctx.fillText(`  ⚡ +${rewards.expGained} Experience Nodes`, 100, 310);
-          if (rewards.leveledUp) {
-            ctx.fillStyle = '#a855f7';
-            ctx.fillText(`  [NOTICE] LEVEL UP! New Level ${rewards.level}`, 100, 335);
-          }
-        } else if (submitStatus === 'failed') {
-          ctx.fillStyle = '#ff0055';
-          ctx.fillText(`> [CRITICAL_ERROR] CLOUD NODE REFUSED DATA SYNC`, 100, 240);
-        } else if (submitStatus === 'offline') {
-          ctx.fillStyle = '#ffaa00';
-          ctx.fillText(`> [NOTICE] OFFLINE OPERATION DETECTED`, 100, 240);
-          ctx.fillText(`> Log in to authorize rewards.`, 100, 265);
-        }
-
-        // Action Options
-        const gameOverItems = ['PLAY AGAIN', 'QUIT TO MENU'];
-        gameOverItems.forEach((text, idx) => {
-          const isSelected = menuIndex === idx;
-          const y = 460 + idx * 55;
-
-          ctx.textAlign = 'center';
-          if (isSelected) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#a855f7';
-            ctx.strokeStyle = '#a855f7';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(CANVAS_SIZE / 2 - 130, y - 26, 260, 36);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", monospace';
-          } else {
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#8888a0';
-            ctx.font = '15px "Orbitron", monospace';
-          }
-          ctx.fillText(text, CANVAS_SIZE / 2, y);
-        });
-      }
-
-      // ----------------------------------------------------
-      // STATE: GAMEPLAY
-      // ----------------------------------------------------
-      else if (curState === 'GAMEPLAY') {
+      if (curState === 'PAUSE' || curState === 'GAMEOVER' || curState === 'GAMEPLAY') {
         drawActiveGameElements(ctx);
       }
 
@@ -875,26 +709,22 @@ const TowerStack = () => {
   return (
     <div className="stack-page-wrapper">
       {/* Floating circular navigation back button */}
-      {gameState === 'LOBBY' || gameState === 'GAMEOVER' || gameState === 'PAUSE' ? (
+            {gameState === 'LOBBY' || gameState === 'GAMEOVER' || gameState === 'PAUSE' ? (
         <Link to="/UODGaming" className="floating-back-btn" title="Back to Games">
           <ArrowLeft size={20} />
         </Link>
-      ) : null}
-
-      {gameState === 'GAMEPLAY' ? (
-        <button
-          onClick={() => {
-            playSound('click', muted);
-            setGameState('PAUSE');
-            setMenuIndex(0);
-          }}
-          className="floating-back-btn"
+      ) : gameState === 'GAMEPLAY' ? (
+        <button 
+          onClick={() => { playSound('click', mutedRef.current); setGameState('PAUSE'); setMenuIndex && typeof setMenuIndex === 'function' ? setMenuIndex(0) : null; }} 
+          className="floating-back-btn" 
+          style={{ cursor: 'pointer' }}
           title="Pause Game"
-          style={{ cursor: 'pointer', outline: 'none' }}
         >
-          <Pause size={20} />
+          <Pause size={20} color="white" />
         </button>
       ) : null}
+
+
 
       <div className="game-content-card">
         <div 
@@ -910,8 +740,87 @@ const TowerStack = () => {
             ref={canvasRef}
             width={CANVAS_SIZE}
             height={CANVAS_SIZE}
-            style={{ display: 'block', background: '#030206', width: '100%', height: 'auto', maxWidth: '600px' }}
+            style={{ display: 'block', background: '#020205', width: '100%', height: 'auto', maxWidth: '650px' }}
+            onClick={handleCanvasClick}
           />
+          
+          {/* DOM OVERLAYS */}
+          {gameState === 'LOBBY' && (
+            <div className="towerstack-overlay">
+              <h1 className="towerstack-title" style={{ color: '#a855f7', textShadow: '0 0 15px #a855f7' }}>NEON TOWER</h1>
+              <p className="towerstack-subtitle">SYNTHETIC ARCHITECTURE PROTOCOL</p>
+              
+              <div className="towerstack-menu">
+                <button 
+                  className={`towerstack-btn ${menuIndex === 0 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(0)}
+                  style={menuIndex === 0 ? { borderColor: '#a855f7', color: '#fff', boxShadow: '0 0 15px #a855f7', textShadow: '0 0 8px #a855f7' } : {}}
+                  onClick={() => { playSound('click', mutedRef.current); startGame(); }}
+                >
+                  START STACK
+                </button>
+                <button 
+                  className={`towerstack-btn ${menuIndex === 1 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(1)}
+                  style={menuIndex === 1 ? { borderColor: '#a855f7', color: '#fff', boxShadow: '0 0 15px #a855f7', textShadow: '0 0 8px #a855f7' } : {}}
+                  onClick={() => { playSound('click', mutedRef.current); window.location.href = '/UODGaming'; }}
+                >
+                  EXIT TO MENU
+                </button>
+              </div>
+              <p className="towerstack-subtitle" style={{ marginTop: '40px', fontSize: '12px' }}>PRESS SPACEBAR / TOUCH TO DROP THE BLOCK PRECISELY</p>
+            </div>
+          )}
+
+          {gameState === 'PAUSE' && (
+            <div className="towerstack-overlay" style={{ background: 'rgba(5, 5, 10, 0.96)' }}>
+              <h1 className="towerstack-title" style={{ color: '#00d4ff', textShadow: '0 0 15px rgba(0, 212, 255, 0.8)' }}>SYSTEM PAUSED</h1>
+              <p className="towerstack-subtitle" style={{ marginBottom: '60px' }}></p>
+              
+              <div className="towerstack-menu">
+                {['RESUME', 'RESTART', 'BACK TO MENU'].map((text, idx) => (
+                  <button 
+                    key={idx}
+                    className={`towerstack-btn ${menuIndex === idx ? 'selected' : ''}`}
+                    onMouseEnter={() => setMenuIndex(idx)}
+                    onClick={() => {
+                      playSound('click', mutedRef.current);
+                      if (idx === 0) { lastFrameTimeRef.current = performance.now(); setGameState('GAMEPLAY'); }
+                      else if (idx === 1) startGame();
+                      else { setGameState('LOBBY'); setMenuIndex(0); }
+                    }}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {gameState === 'GAMEOVER' && (
+            <div className="towerstack-overlay" style={{ background: 'rgba(5, 5, 10, 0.96)' }}>
+              <h1 className="towerstack-title" style={{ color: '#ff0055', textShadow: '0 0 20px rgba(255, 0, 85, 0.8)' }}>GAME OVER</h1>
+              <p className="towerstack-subtitle" style={{ color: '#00d4ff', fontSize: '20px', marginBottom: '5px' }}>CURRENT SCORE: {score}</p>
+              <p className="towerstack-subtitle" style={{ color: '#00ff88', fontSize: '16px', marginBottom: '40px' }}>BEST SCORE: {highScore}</p>
+              
+              <div className="towerstack-menu">
+                <button 
+                  className={`towerstack-btn ${menuIndex === 0 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(0)}
+                  onClick={() => { playSound('click', mutedRef.current); startGame(); }}
+                >
+                  PLAY AGAIN
+                </button>
+                <button 
+                  className={`towerstack-btn ${menuIndex === 1 ? 'selected' : ''}`}
+                  onMouseEnter={() => setMenuIndex(1)}
+                  onClick={() => { playSound('click', mutedRef.current); setGameState('LOBBY'); setMenuIndex(0); }}
+                >
+                  QUIT TO MENU
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
